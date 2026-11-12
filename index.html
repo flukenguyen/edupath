@@ -1,0 +1,2142 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDUPATH 9+ | Hỗ trợ Ra quyết định Học tập & Định hướng Nghề nghiệp</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts: Inter & Dancing Script for Banner -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        handwriting: ['Dancing Script', 'cursive'],
+                    },
+                    colors: {
+                        sidebar: '#172b4d',
+                        sidebarHover: '#243b67',
+                        sidebarActive: '#3b66d6',
+                        bgMain: '#f4f7fb',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7fb;
+            color: #1e293b;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .card-shadow {
+            box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+        }
+        .banner-gradient {
+            background: linear-gradient(105deg, #eef6ff 0%, #e0effe 45%, #dbeafe 100%);
+        }
+        .progress-bar-animate {
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes pulse-soft {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.75; }
+        }
+        .animate-pulse-soft {
+            animation: pulse-soft 2.5s infinite;
+        }
+    </style>
+</head>
+<body class="h-screen flex overflow-hidden select-none md:select-auto">
+
+    <!-- ================= SIDEBAR BÊN TRÁI (Bám sát ảnh 123.jpg) ================= -->
+    <aside id="sidebar" class="w-64 bg-[#182c53] text-white flex flex-col justify-between shrink-0 transition-all duration-300 z-30 fixed md:static h-full -translate-x-full md:translate-x-0">
+        <div>
+            <!-- Logo EduPath 9+ -->
+            <div class="h-20 flex items-center justify-between px-6 border-b border-white/10">
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('dashboard')">
+                    <div class="relative flex items-center">
+                        <span class="text-2xl font-extrabold tracking-tight text-white">EduPath</span>
+                        <span class="ml-1 px-1.5 py-0.5 text-xs font-bold bg-sky-500 text-white rounded-md shadow">9+</span>
+                        <!-- Icon mạch điện tử như ảnh mẫu -->
+                        <svg class="w-7 h-7 text-sky-400 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="18" cy="5" r="2"/>
+                            <circle cx="18" cy="19" r="2"/>
+                            <circle cx="12" cy="12" r="2"/>
+                            <path d="M6 12h4M14 12h4M12 10V5h4M12 14v5h4" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                </div>
+                <button class="md:hidden text-slate-300 hover:text-white" onclick="toggleMobileSidebar()">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Chọn nhanh Ca giả định trên Sidebar -->
+            <div class="px-4 pt-4 pb-2">
+                <div class="bg-[#213866] rounded-xl p-3 border border-sky-400/20">
+                    <label class="text-[11px] uppercase tracking-wider text-sky-300 font-semibold block mb-1.5">
+                        <i class="fas fa-user-graduate mr-1"></i> Hồ sơ đang thao tác:
+                    </label>
+                    <select id="globalStudentSelect" onchange="handleStudentChange(this.value)" class="w-full bg-[#132242] text-white text-xs font-medium rounded-lg px-2.5 py-2 border border-sky-500/30 focus:outline-none focus:border-sky-400 cursor-pointer">
+                        <!-- Render từ JS -->
+                    </select>
+                </div>
+            </div>
+
+            <!-- Danh mục Menu chính -->
+            <nav class="mt-2 px-3 space-y-1.5">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item w-full flex items-center space-x-3.5 px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-[#3b66d6] text-white shadow-md">
+                    <i class="fas fa-home w-5 text-center text-base"></i>
+                    <span>Trang chủ</span>
+                </button>
+
+                <button onclick="switchTab('profile')" id="nav-profile" class="nav-item w-full flex items-center space-x-3.5 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-[#243b67] hover:text-white transition-all">
+                    <i class="fas fa-user w-5 text-center text-base"></i>
+                    <div class="text-left">
+                        <div>Hồ sơ năng lực</div>
+                        <div class="text-[10px] text-sky-300/80 font-normal">Hợp phần A: Nguyện vọng</div>
+                    </div>
+                </button>
+
+                <button onclick="switchTab('decision-map')" id="nav-decision-map" class="nav-item w-full flex items-center space-x-3.5 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-[#243b67] hover:text-white transition-all">
+                    <i class="fas fa-compass w-5 text-center text-base"></i>
+                    <div class="text-left">
+                        <div>Khám phá & Đối chiếu</div>
+                        <div class="text-[10px] text-sky-300/80 font-normal">Hợp phần B: Bản đồ 9+</div>
+                    </div>
+                </button>
+
+                <button onclick="switchTab('action-cards')" id="nav-action-cards" class="nav-item w-full flex items-center space-x-3.5 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-[#243b67] hover:text-white transition-all">
+                    <i class="fas fa-chart-bar w-5 text-center text-base"></i>
+                    <div class="text-left">
+                        <div>Tiến độ & Thẻ hành động</div>
+                        <div class="text-[10px] text-sky-300/80 font-normal">Hợp phần C: Kế hoạch 2-4 tuần</div>
+                    </div>
+                </button>
+
+                <button onclick="switchTab('cases')" id="nav-cases" class="nav-item w-full flex items-center space-x-3.5 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-[#243b67] hover:text-white transition-all">
+                    <i class="fas fa-graduation-cap w-5 text-center text-base"></i>
+                    <div class="text-left">
+                        <div>Đồng hành mùa thi</div>
+                        <div class="text-[10px] text-sky-300/80 font-normal">Bộ ca giả định & Văn bản</div>
+                    </div>
+                </button>
+
+                <button onclick="switchTab('consultation')" id="nav-consultation" class="nav-item w-full flex items-center space-x-3.5 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-[#243b67] hover:text-white transition-all">
+                    <i class="fas fa-comments w-5 text-center text-base"></i>
+                    <div class="text-left">
+                        <div>Tư vấn & Xác nhận</div>
+                        <div class="text-[10px] text-sky-300/80 font-normal">Giáo viên & Đối sánh</div>
+                    </div>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Thông tin dự án dưới Sidebar -->
+        <div class="p-4 border-t border-white/10 text-xs text-slate-300 space-y-2">
+            <div class="bg-[#122240] p-3 rounded-xl border border-white/5">
+                <div class="flex items-center space-x-2 text-sky-400 font-semibold mb-1">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Nguyên tắc Mô hình 9+</span>
+                </div>
+                <p class="text-[11px] text-slate-300 leading-relaxed">
+                    Dữ liệu minh họa giả định. Không chấm điểm "hợp nghề tuyệt đối" hay tự kết luận đỗ/trượt.
+                </p>
+            </div>
+            <div class="text-[11px] text-center text-slate-400 pt-1">
+                CĐ Công nghệ TP.HCM - Phân hiệu Đồng Nai
+            </div>
+        </div>
+    </aside>
+
+    <!-- ================= KHU VỰC NỘI DUNG CHÍNH ================= -->
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+        
+        <!-- HEADER PHÍA TRÊN (Giống ảnh mẫu + Nút Xuất CSV & Chuyển vai trò) -->
+        <header class="h-16 bg-white/80 backdrop-blur-md border-b border-slate-200/80 px-4 md:px-8 flex items-center justify-between shrink-0 z-20">
+            <div class="flex items-center space-x-3 flex-1 max-w-xl">
+                <button class="md:hidden text-slate-600 hover:text-slate-900 p-2" onclick="toggleMobileSidebar()">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+                <!-- Thanh tìm kiếm như ảnh mẫu -->
+                <div class="relative w-full">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="text" id="globalSearchInput" oninput="handleQuickSearch(this.value)" placeholder="Tìm kiếm khóa học, ngành học, bài viết, mã học sinh (HS-01)..." 
+                        class="w-full pl-10 pr-4 py-2 bg-slate-100/90 hover:bg-slate-100 focus:bg-white text-sm rounded-full border border-transparent focus:border-blue-400 focus:outline-none transition-all text-slate-700">
+                    <!-- Kết quả tìm kiếm nhanh -->
+                    <div id="searchDropdown" class="hidden absolute left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-slate-100 p-3 z-50 max-h-72 overflow-y-auto"></div>
+                </div>
+            </div>
+
+            <!-- Cụm công cụ bên phải Header -->
+            <div class="flex items-center space-x-2.5 md:space-x-4">
+                <!-- Chuyển đổi chế độ Học sinh / Giáo viên tư vấn -->
+                <div class="hidden lg:flex items-center bg-slate-100 p-1 rounded-full border border-slate-200">
+                    <button onclick="setRole('student')" id="roleBtnStudent" class="px-3 py-1 rounded-full text-xs font-semibold transition-all bg-white text-blue-700 shadow-sm">
+                        <i class="fas fa-user-graduate mr-1"></i> Học sinh 9+
+                    </button>
+                    <button onclick="setRole('teacher')" id="roleBtnTeacher" class="px-3 py-1 rounded-full text-xs font-semibold transition-all text-slate-600 hover:text-slate-900">
+                        <i class="fas fa-chalkboard-teacher mr-1"></i> GV Tư vấn
+                    </button>
+                </div>
+
+                <!-- Nút Mở Trung tâm Xuất/Nhập CSV -->
+                <div class="relative">
+                    <button onclick="toggleCsvMenu()" class="flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs md:text-sm font-semibold px-3.5 py-2 rounded-full shadow-sm hover:shadow transition-all">
+                        <i class="fas fa-file-csv text-base"></i>
+                        <span class="hidden sm:inline">Xuất dữ liệu .CSV</span>
+                        <i class="fas fa-chevron-down text-[10px]"></i>
+                    </button>
+                    <!-- Dropdown Menu Xuất CSV -->
+                    <div id="csvDropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-50">
+                        <div class="px-4 py-2 border-b border-slate-100">
+                            <p class="text-xs font-bold text-slate-800 uppercase tracking-wider">Xuất Báo Cáo Chuẩn UTF-8 (Excel)</p>
+                            <p class="text-[11px] text-slate-500">Hỗ trợ đầy đủ tiếng Việt có dấu cho chấm thi</p>
+                        </div>
+                        <button onclick="exportCurrentStudentCSV()" class="w-full px-4 py-2.5 text-left text-xs hover:bg-slate-50 flex items-start space-x-3 transition-colors">
+                            <i class="fas fa-user-check text-blue-600 mt-0.5 text-sm"></i>
+                            <div>
+                                <div class="font-semibold text-slate-800">1. Xuất Hồ sơ & Bản đồ quyết định hiện tại</div>
+                                <div class="text-slate-500 text-[11px]">Gồm đầy đủ Hợp phần A, B, C của học sinh đang chọn</div>
+                            </div>
+                        </button>
+                        <button onclick="exportAllCasesCSV()" class="w-full px-4 py-2.5 text-left text-xs hover:bg-slate-50 flex items-start space-x-3 transition-colors">
+                            <i class="fas fa-users text-emerald-600 mt-0.5 text-sm"></i>
+                            <div>
+                                <div class="font-semibold text-slate-800">2. Xuất Toàn bộ Bộ ca kiểm thử (6 Hồ sơ)</div>
+                                <div class="text-slate-500 text-[11px]">Bảng tổng hợp điểm, mục tiêu, khoảng cách & xác nhận</div>
+                            </div>
+                        </button>
+                        <button onclick="exportActionCardsCSV()" class="w-full px-4 py-2.5 text-left text-xs hover:bg-slate-50 flex items-start space-x-3 transition-colors">
+                            <i class="fas fa-tasks text-amber-600 mt-0.5 text-sm"></i>
+                            <div>
+                                <div class="font-semibold text-slate-800">3. Xuất Danh sách Thẻ hành động 2-4 tuần</div>
+                                <div class="text-slate-500 text-[11px]">Toàn bộ nhiệm vụ, minh chứng, người hỗ trợ & hạn chót</div>
+                            </div>
+                        </button>
+                        <div class="border-t border-slate-100 mt-1 pt-1 px-4 py-2 flex items-center justify-between">
+                            <button onclick="openProjectInfoModal()" class="text-[11px] text-blue-600 font-semibold hover:underline">
+                                <i class="fas fa-info-circle mr-1"></i>Thông tin Nhóm tác giả
+                            </button>
+                            <button onclick="resetDefaultData()" class="text-[11px] text-rose-600 font-medium hover:underline">
+                                <i class="fas fa-undo mr-1"></i>Khôi phục gốc
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chuông thông báo -->
+                <button onclick="showNotificationModal()" class="relative w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition-colors">
+                    <i class="far fa-bell"></i>
+                    <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white"></span>
+                </button>
+
+                <!-- Avatar người dùng -->
+                <div class="flex items-center space-x-2 cursor-pointer pl-1" onclick="openProjectInfoModal()">
+                    <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-600 to-sky-400 text-white font-bold text-xs flex items-center justify-center shadow-sm ring-2 ring-white" id="headerAvatar">
+                        HS1
+                    </div>
+                    <div class="hidden xl:block text-left">
+                        <div class="text-xs font-bold text-slate-800 leading-tight" id="headerStudentName">Mã HS-01 (Giả định)</div>
+                        <div class="text-[10px] text-slate-500" id="headerStudentClass">Lớp 12 Hệ 9+ • Ô tô</div>
+                    </div>
+                    <i class="fas fa-chevron-down text-[10px] text-slate-400 hidden sm:inline"></i>
+                </div>
+            </div>
+        </header>
+
+        <!-- ================= MAIN SCROLLABLE CONTENT ================= -->
+        <main class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-7 space-y-6">
+
+            <!-- ===================================================================== -->
+            <!-- TAB 1: TRANG CHỦ DASHBOARD (BÁM SÁT 100% BỐ CỤC ẢNH MẪU 123.JPG)       -->
+            <!-- ===================================================================== -->
+            <section id="tab-dashboard" class="space-y-6">
+                
+                <!-- BANNER XIN CHÀO (Thiết kế giống hệt ảnh mẫu 123.jpg) -->
+                <div class="banner-gradient rounded-2xl p-6 md:px-8 md:py-6 card-shadow border border-blue-100/80 relative overflow-hidden flex flex-col md:flex-row items-center justify-between">
+                    <div class="z-10 max-w-xl space-y-2.5">
+                        <div class="inline-flex items-center space-x-2 bg-white/80 backdrop-blur px-3 py-1 rounded-full text-xs font-semibold text-blue-700 border border-blue-200/60 shadow-sm">
+                            <span class="w-2 h-2 rounded-full bg-blue-600 animate-ping"></span>
+                            <span id="bannerBadgeText">Đang xem hồ sơ: Mã HS-01 • Lớp 12 Hệ 9+ (Kỹ thuật Ô tô)</span>
+                        </div>
+                        <h1 class="text-2xl md:text-4xl font-extrabold text-slate-800 tracking-tight flex items-center gap-3">
+                            <span>Xin chào</span>
+                            <span class="inline-block animate-bounce">👋</span>
+                        </h1>
+                        <p class="text-slate-600 text-sm md:text-base leading-relaxed">
+                            Hành trình tương lai bắt đầu từ những hiểu biết hôm nay.<br>
+                            Cùng khám phá, học tập và phát triển phiên bản tốt nhất của chính bạn!
+                        </p>
+                        <!-- Phím tắt nhanh tới 3 hợp phần cốt lõi -->
+                        <div class="pt-2 flex flex-wrap gap-2">
+                            <button onclick="switchTab('decision-map')" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg shadow-sm transition-all flex items-center gap-1.5">
+                                <i class="fas fa-sitemap"></i> Mở Bản đồ quyết định 9+
+                            </button>
+                            <button onclick="switchTab('action-cards')" class="px-3.5 py-1.5 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-lg border border-slate-200/80 shadow-sm transition-all flex items-center gap-1.5">
+                                <i class="fas fa-calendar-check text-blue-600"></i> Lập Thẻ hành động 2-4 tuần
+                            </button>
+                            <button onclick="exportCurrentStudentCSV()" class="px-3.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-semibold rounded-lg border border-emerald-200 transition-all flex items-center gap-1.5">
+                                <i class="fas fa-download"></i> Xuất Phiếu (.CSV)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Minh họa SVG Cột biển báo Khám phá - Học tập - Tương lai & Học sinh đeo balo + Chữ viết tay -->
+                    <div class="mt-4 md:mt-0 flex items-center space-x-4 z-10 select-none">
+                        <svg class="w-56 md:w-64 h-36 md:h-40 shrink-0" viewBox="0 0 320 175" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Đồi cỏ nền -->
+                            <path d="M10 165 Q95 130 190 165 Z" fill="#bbf7d0" opacity="0.7"/>
+                            <path d="M110 165 Q210 120 310 165 Z" fill="#86efac" opacity="0.5"/>
+                            <!-- Cột biển báo -->
+                            <rect x="78" y="25" width="6" height="135" rx="3" fill="#78350f"/>
+                            <!-- Biển 1: KHÁM PHÁ (Xanh dương) -->
+                            <path d="M40 34 H115 L125 46 L115 58 H40 C37 58 35 56 35 53 V39 C35 36 37 34 40 34 Z" fill="#3b82f6"/>
+                            <text x="77" y="49" fill="white" font-size="10" font-weight="bold" text-anchor="middle">KHÁM PHÁ</text>
+                            <!-- Biển 2: HỌC TẬP (Xanh lá) -->
+                            <path d="M122 65 H45 L35 77 L45 89 H122 C125 89 127 87 127 84 V70 C127 67 125 65 122 65 Z" fill="#10b981"/>
+                            <text x="83" y="80" fill="white" font-size="10" font-weight="bold" text-anchor="middle">HỌC TẬP</text>
+                            <!-- Biển 3: TƯƠNG LAI (Cam) -->
+                            <path d="M42 96 H118 L128 108 L118 120 H42 C39 120 37 118 37 115 V101 C37 98 39 96 42 96 Z" fill="#f97316"/>
+                            <text x="80" y="111" fill="white" font-size="10" font-weight="bold" text-anchor="middle">TƯƠNG LAI</text>
+                            
+                            <!-- Nhân vật học sinh đeo balo cầm sách nhìn về biển chỉ dẫn -->
+                            <!-- Balo -->
+                            <rect x="198" y="82" width="28" height="44" rx="10" fill="#1e293b"/>
+                            <rect x="204" y="90" width="18" height="22" rx="4" fill="#334155"/>
+                            <!-- Áo khoác & Thân -->
+                            <path d="M168 85 C168 75 202 75 205 88 L210 155 H162 L168 85 Z" fill="#3b82f6"/>
+                            <path d="M172 86 L185 155 H162 L168 86 Z" fill="#eff6ff"/>
+                            <!-- Đầu & Tóc -->
+                            <circle cx="184" cy="54" r="16" fill="#fed7aa"/>
+                            <path d="M168 50 C166 36 185 30 198 38 C206 43 204 56 196 56 C196 48 185 45 175 48 Z" fill="#1e293b"/>
+                            <!-- Cánh tay cầm sách xanh -->
+                            <rect x="150" y="102" width="22" height="28" rx="3" fill="#10b981" transform="rotate(-10 150 102)"/>
+                            <path d="M165 92 L156 118 L175 122" stroke="#60a5fa" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <div class="hidden xl:block font-handwriting text-blue-800/85 text-2xl leading-snug -rotate-6 select-none pr-2">
+                            Kiến tạo<br>phiên bản tốt hơn<br>của chính mình
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4 THẺ THỐNG KÊ NHANH (KPI CARDS - Giống ảnh mẫu 123.jpg) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
+                    <!-- Thẻ 1 -->
+                    <div onclick="switchTab('profile')" class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 flex items-center justify-between cursor-pointer hover:border-blue-300 transition-all group">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl group-hover:scale-105 transition-transform">
+                                <i class="fas fa-book-open"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-extrabold text-slate-800" id="kpiCourseCount">12</div>
+                                <div class="text-xs text-slate-500 font-medium">Môn văn hóa & nghề đang học</div>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-slate-300 group-hover:text-blue-500 text-xs"></i>
+                    </div>
+
+                    <!-- Thẻ 2 -->
+                    <div onclick="switchTab('decision-map')" class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 flex items-center justify-between cursor-pointer hover:border-emerald-300 transition-all group">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl group-hover:scale-105 transition-transform">
+                                <i class="fas fa-signal"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-extrabold text-slate-800" id="kpiAvgProgress">68%</div>
+                                <div class="text-xs text-slate-500 font-medium">Tiến độ trung bình hiện tại</div>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-slate-300 group-hover:text-emerald-500 text-xs"></i>
+                    </div>
+
+                    <!-- Thẻ 3 -->
+                    <div onclick="switchTab('action-cards')" class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 flex items-center justify-between cursor-pointer hover:border-purple-300 transition-all group">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl group-hover:scale-105 transition-transform">
+                                <i class="far fa-calendar-alt"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-extrabold text-slate-800" id="kpiDaysLeft">28</div>
+                                <div class="text-xs text-slate-500 font-medium">Ngày đến mốc đánh giá kỳ thi</div>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-slate-300 group-hover:text-purple-500 text-xs"></i>
+                    </div>
+
+                    <!-- Thẻ 4 -->
+                    <div onclick="switchTab('decision-map')" class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 flex items-center justify-between cursor-pointer hover:border-amber-300 transition-all group">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center text-xl group-hover:scale-105 transition-transform">
+                                <i class="far fa-star"></i>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-extrabold text-slate-800" id="kpiHighlightCount">5</div>
+                                <div class="text-xs text-slate-500 font-medium">Hoạt động & Việc cần xác minh</div>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-slate-300 group-hover:text-orange-500 text-xs"></i>
+                    </div>
+                </div>
+
+                <!-- HÀNG GIỮA: HỒ SƠ NĂNG LỰC (BIỂU ĐỒ RADAR) & TIẾN ĐỘ HỌC TẬP (PROGRESS BARS) -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    
+                    <!-- Khối Trái: Hồ sơ năng lực của bạn (7 cột) -->
+                    <div class="lg:col-span-7 bg-white rounded-2xl p-5 md:p-6 card-shadow border border-slate-100 flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center space-x-2.5">
+                                <i class="fas fa-chart-bar text-blue-600 text-lg"></i>
+                                <h2 class="text-base md:text-lg font-bold text-slate-800">Hồ sơ năng lực của bạn</h2>
+                            </div>
+                            <button onclick="switchTab('profile')" class="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1">
+                                <span>Xem chi tiết</span>
+                                <i class="fas fa-arrow-right text-[10px]"></i>
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center my-auto">
+                            <!-- Biểu đồ Radar SVG Động (7 cột) -->
+                            <div class="md:col-span-7 flex justify-center items-center">
+                                <div id="radarChartContainer" class="w-full max-w-[310px] aspect-square flex items-center justify-center">
+                                    <!-- Render bằng JS SVG sắc nét -->
+                                </div>
+                            </div>
+
+                            <!-- Chú giải & Hộp nhận xét thông minh (5 cột) -->
+                            <div class="md:col-span-5 space-y-4">
+                                <div class="space-y-2 text-xs font-medium text-slate-600">
+                                    <div class="flex items-center space-x-2.5">
+                                        <span class="w-3 h-3 rounded-full bg-blue-600 inline-block"></span>
+                                        <span>Chỉ số của bạn (Tự khai & Thực hành)</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2.5">
+                                        <span class="w-3 h-3 rounded-full bg-blue-200 inline-block"></span>
+                                        <span>Trung bình nhóm tham chiếu 9+</span>
+                                    </div>
+                                </div>
+
+                                <!-- Box nhận xét có bóng đèn giống ảnh mẫu -->
+                                <div class="bg-blue-50/80 border border-blue-100 rounded-2xl p-4 space-y-2">
+                                    <div class="w-7 h-7 rounded-lg bg-white text-blue-600 shadow-sm flex items-center justify-center">
+                                        <i class="far fa-lightbulb"></i>
+                                    </div>
+                                    <p id="radarInsightText" class="text-xs text-slate-700 leading-relaxed font-medium">
+                                        Bạn có thế mạnh nổi bật ở <b>Kỹ năng thực hành nghề</b> và <b>Giải quyết vấn đề</b>. Đây là tín hiệu tích cực để tìm hiểu nhóm ngành kỹ thuật, không phải kết luận "hợp nghề tuyệt đối".
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Khối Phải: Tiến độ học tập (5 cột - Giống ảnh mẫu 123.jpg) -->
+                    <div class="lg:col-span-5 bg-white rounded-2xl p-5 md:p-6 card-shadow border border-slate-100 flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-2.5">
+                                <i class="fas fa-chart-line text-blue-600 text-lg"></i>
+                                <h2 class="text-base md:text-lg font-bold text-slate-800">Tiến độ học tập & Khoảng cách</h2>
+                            </div>
+                            <button onclick="switchTab('decision-map')" class="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1">
+                                <span>Xem tất cả</span>
+                                <i class="fas fa-arrow-right text-[10px]"></i>
+                            </button>
+                        </div>
+
+                        <!-- Danh sách 6 môn học kèm thanh tiến trình và nhãn "Cần cải thiện" -->
+                        <div id="subjectProgressList" class="space-y-3.5 my-auto">
+                            <!-- Render từ JS theo từng học sinh -->
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- HÀNG DƯỚI: NHIỆM VỤ (THẺ HÀNH ĐỘNG) & THÔNG TIN TUYỂN SINH MỚI NHẤT -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    
+                    <!-- Khối Trái: Nhiệm vụ (Checklist tương tác - 7 cột) -->
+                    <div class="lg:col-span-7 bg-white rounded-2xl p-5 md:p-6 card-shadow border border-slate-100">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-2.5">
+                                <i class="far fa-check-circle text-blue-600 text-lg"></i>
+                                <h2 class="text-base md:text-lg font-bold text-slate-800">Nhiệm vụ & Thẻ hành động (2–4 tuần)</h2>
+                            </div>
+                            <button onclick="switchTab('action-cards')" class="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1">
+                                <span>Xem tất cả</span>
+                                <i class="fas fa-arrow-right text-[10px]"></i>
+                            </button>
+                        </div>
+
+                        <div id="dashboardTaskList" class="divide-y divide-slate-100">
+                            <!-- Render từ JS -->
+                        </div>
+                    </div>
+
+                    <!-- Khối Phải: Thông tin tuyển sinh & Văn bản đối chiếu mới nhất (5 cột) -->
+                    <div class="lg:col-span-5 bg-white rounded-2xl p-5 md:p-6 card-shadow border border-slate-100">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-2.5">
+                                <i class="far fa-newspaper text-blue-600 text-lg"></i>
+                                <h2 class="text-base md:text-lg font-bold text-slate-800">Thông tin tuyển sinh & Văn bản</h2>
+                            </div>
+                            <button onclick="switchTab('cases')" class="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1">
+                                <span>Xem thêm</span>
+                                <i class="fas fa-arrow-right text-[10px]"></i>
+                            </button>
+                        </div>
+
+                        <div class="space-y-4">
+                            <!-- Tin 1 -->
+                            <div onclick="openRegulationModal(0)" class="flex space-x-3.5 group cursor-pointer p-1.5 rounded-xl hover:bg-slate-50 transition-colors">
+                                <img src="https://placehold.co/120x80/2563eb/ffffff?text=TT+13/2026" alt="Quy chế" class="w-24 h-16 rounded-xl object-cover shrink-0 shadow-sm">
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between gap-2">
+                                        <h3 class="text-xs md:text-sm font-bold text-slate-800 group-hover:text-blue-600 truncate">Quy chế thi tốt nghiệp THPT (Thông tư 24/2024 & 13/2026)</h3>
+                                        <span class="text-[11px] text-slate-400 shrink-0">12/10/2026</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500 line-clamp-2 mt-1">
+                                        Đối chiếu điều kiện dự thi, công nhận tốt nghiệp và hồ sơ dành cho học sinh giáo dục thường xuyên / hệ 9+...
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Tin 2 -->
+                            <div onclick="openRegulationModal(1)" class="flex space-x-3.5 group cursor-pointer p-1.5 rounded-xl hover:bg-slate-50 transition-colors">
+                                <img src="https://placehold.co/120x80/059669/ffffff?text=He+9%2B+HCT" alt="Lộ trình 9+" class="w-24 h-16 rounded-xl object-cover shrink-0 shadow-sm">
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between gap-2">
+                                        <h3 class="text-xs md:text-sm font-bold text-slate-800 group-hover:text-blue-600 truncate">Hướng dẫn xác minh hồ sơ & lộ trình liên thông hệ 9+</h3>
+                                        <span class="text-[11px] text-slate-400 shrink-0">10/10/2026</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500 line-clamp-2 mt-1">
+                                        Tư cách dự thi và điều kiện học tiếp cần được xác minh tại Phòng Đào tạo nhà trường, không tự suy diễn từ tên gọi chương trình.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Tin 3 -->
+                            <div onclick="openRegulationModal(2)" class="flex space-x-3.5 group cursor-pointer p-1.5 rounded-xl hover:bg-slate-50 transition-colors">
+                                <img src="https://placehold.co/120x80/d97706/ffffff?text=BVDLCN+91" alt="Bảo vệ dữ liệu" class="w-24 h-16 rounded-xl object-cover shrink-0 shadow-sm">
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between gap-2">
+                                        <h3 class="text-xs md:text-sm font-bold text-slate-800 group-hover:text-blue-600 truncate">Luật Bảo vệ dữ liệu cá nhân 91/2025/QH15 & NĐ 356/2025</h3>
+                                        <span class="text-[11px] text-slate-400 shrink-0">08/10/2026</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500 line-clamp-2 mt-1">
+                                        Nguyên tắc bảo mật thông tin học sinh chưa thành niên và sử dụng bộ ca giả định trong nghiên cứu mô hình tư vấn.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ===================================================================== -->
+            <!-- TAB 2: HỢP PHẦN A - HỒ SƠ NĂNG LỰC & NGUYỆN VỌNG (PHIẾU CHÂN DUNG)      -->
+            <!-- ===================================================================== -->
+            <section id="tab-profile" class="hidden space-y-6">
+                <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <span class="px-2.5 py-1 bg-blue-100 text-blue-700 rounded-md text-xs font-bold uppercase tracking-wide">Hợp phần A • Bước 1 & Bước 2</span>
+                        <h2 class="text-xl font-extrabold text-slate-800 mt-1">Hồ sơ Năng lực & Phiếu Chân dung Mục tiêu 9+</h2>
+                        <p class="text-xs md:text-sm text-slate-500 mt-0.5">
+                            Đầu vào tối thiểu: Khối lớp, lộ trình học thực tế, môn mạnh/yếu, sở thích nghề, 1–2 lựa chọn cần tìm hiểu.
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="saveProfileChanges()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl shadow-sm transition-all flex items-center gap-1.5">
+                            <i class="fas fa-save"></i> Lưu cập nhật hồ sơ
+                        </button>
+                        <button onclick="exportCurrentStudentCSV()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl shadow-sm transition-all flex items-center gap-1.5">
+                            <i class="fas fa-file-csv"></i> Xuất CSV Hồ sơ này
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Khung chỉnh sửa & Xem Phiếu chân dung mục tiêu -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Form thông tin đầu vào (7 cột) -->
+                    <div class="lg:col-span-7 bg-white rounded-2xl p-6 card-shadow border border-slate-100 space-y-4">
+                        <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider border-b pb-2.5 flex items-center justify-between">
+                            <span><i class="fas fa-edit text-blue-600 mr-2"></i>Thông tin Hồ sơ & Điểm học tập tự khai/giả định</span>
+                            <span class="text-xs font-normal text-slate-400">Có thể chỉnh sửa để kiểm thử</span>
+                        </h3>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Mã & Tên học sinh (Giả định)</label>
+                                <input type="text" id="inputName" class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Khối lớp & Lộ trình thực tế</label>
+                                <input type="text" id="inputStream" class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Mục tiêu ưu tiên 1 (Nhóm ngành/Hướng đi)</label>
+                                <input type="text" id="inputGoal1" class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Lựa chọn tìm hiểu dự phòng (Mục tiêu 2)</label>
+                                <input type="text" id="inputGoal2" class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Lý do lựa chọn & Sở thích thực hành nghề nghiệp</label>
+                            <textarea id="inputReason" rows="2" class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500"></textarea>
+                        </div>
+
+                        <!-- Điểm số 6 môn -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-2">Điểm học tập hiện tại (Thang điểm 10) & Mục tiêu cá nhân:</label>
+                            <div id="profileScoreInputs" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                <!-- Render từ JS -->
+                            </div>
+                        </div>
+
+                        <!-- Trạng thái xác minh hồ sơ hành chính -->
+                        <div class="pt-2">
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Trạng thái xác minh diện dự thi & điều kiện đầu vào:</label>
+                            <select id="inputVerifyStatus" class="w-full px-3.5 py-2.5 text-sm border border-amber-300 bg-amber-50/50 rounded-xl font-medium text-slate-800 focus:outline-none focus:border-blue-500">
+                                <option value="Cần xác minh tại đơn vị">⚠️ Chưa rõ diện dự thi & hồ sơ phù hợp (Xếp nhóm: Cần xác minh tại đơn vị)</option>
+                                <option value="Đang chờ Phòng Đào tạo phản hồi">⏳ Đã gửi câu hỏi, đang chờ bộ phận Đào tạo/Giáo vụ đối chiếu văn bản</option>
+                                <option value="Đã xác minh hợp lệ tại đơn vị">✅ Đã đối chiếu văn bản & xác nhận điều kiện tại bộ phận có thẩm quyền</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Đầu ra Hợp phần A: Phiếu chân dung mục tiêu (5 cột) -->
+                    <div class="lg:col-span-5 bg-gradient-to-b from-white to-blue-50/40 rounded-2xl p-6 card-shadow border border-blue-100 flex flex-col justify-between">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between border-b border-blue-100 pb-3">
+                                <div>
+                                    <span class="text-[11px] font-bold uppercase text-blue-600">Đầu ra minh họa Hợp phần A</span>
+                                    <h3 class="text-base font-extrabold text-slate-800">PHIẾU CHÂN DUNG MỤC TIÊU</h3>
+                                </div>
+                                <span class="px-2.5 py-1 bg-blue-600 text-white text-xs font-bold rounded-lg" id="portraitCodeBadge">HS-01</span>
+                            </div>
+
+                            <div id="portraitContent" class="space-y-3 text-xs md:text-sm text-slate-700">
+                                <!-- Render tự động từ JS -->
+                            </div>
+                        </div>
+
+                        <div class="mt-6 bg-amber-50 border border-amber-200/80 rounded-xl p-3.5 text-xs text-amber-900 space-y-1">
+                            <div class="font-bold flex items-center gap-1.5">
+                                <i class="fas fa-exclamation-triangle text-amber-600"></i>
+                                <span>Nguyên tắc chuẩn mực của EDUPATH 9+:</span>
+                            </div>
+                            <p class="leading-relaxed text-[11px]">
+                                Phiếu này ghi nhận tín hiệu ban đầu để định hướng tìm hiểu. Hệ thống <b>không chấm điểm "phù hợp nghề 90%" tuyệt đối</b> và không suy diễn khả năng trúng tuyển chỉ từ điểm số.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===================================================================== -->
+            <!-- TAB 3: HỢP PHẦN B - BẢN ĐỒ QUYẾT ĐỊNH 9+ (HẠT NHÂN MÔ HÌNH)            -->
+            <!-- ===================================================================== -->
+            <section id="tab-decision-map" class="hidden space-y-6">
+                
+                <!-- Header Bản đồ quyết định -->
+                <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <span class="px-2.5 py-1 bg-indigo-100 text-indigo-700 rounded-md text-xs font-bold uppercase tracking-wide">Hạt nhân mô hình • Hợp phần B (Bước 3)</span>
+                            <h2 class="text-xl font-extrabold text-slate-800 mt-1">“Bản đồ Quyết định 9+” – Đối chiếu Khoảng cách & Điều kiện</h2>
+                            <p class="text-xs md:text-sm text-slate-500 mt-0.5">
+                                Cùng lúc trả lời 4 câu hỏi cốt lõi và tách bạch 3 nhãn nghiệp vụ: <b class="text-amber-600">Cần củng cố năng lực</b> – <b class="text-blue-600">Cần tìm hiểu lựa chọn</b> – <b class="text-rose-600">Cần xác minh điều kiện/hồ sơ</b>.
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <button onclick="openAddGapModal()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl shadow-sm transition-all flex items-center gap-1.5">
+                                <i class="fas fa-plus"></i> Thêm dòng đối chiếu
+                            </button>
+                            <button onclick="exportCurrentStudentCSV()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl shadow-sm transition-all flex items-center gap-1.5">
+                                <i class="fas fa-file-csv"></i> Xuất Bản đồ (.CSV)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 4 Câu hỏi cốt lõi của Bản đồ quyết định 9+ (Mục 2.1 Thuyết minh) -->
+                    <div id="fourCoreQuestionsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 mt-5">
+                        <!-- Render động theo hồ sơ đang chọn -->
+                    </div>
+                </div>
+
+                <!-- BẢNG ĐỐI CHIẾU 3 CHIỀU (Giống bảng Mục 2.3 trong file Word thuyết minh) -->
+                <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100 space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fas fa-table text-blue-600"></i>
+                            <span>Bảng Đối chiếu Bằng chứng – Diễn giải EDUPATH 9+ – Thẻ hành động đề xuất</span>
+                        </h3>
+                        <div class="flex flex-wrap gap-2 text-[11px] font-semibold">
+                            <span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800">● Cần củng cố năng lực</span>
+                            <span class="px-2.5 py-1 rounded-full bg-blue-100 text-blue-800">● Cần tìm hiểu lựa chọn</span>
+                            <span class="px-2.5 py-1 rounded-full bg-rose-100 text-rose-800">● Cần xác minh điều kiện/hồ sơ</span>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 text-slate-600 text-xs uppercase tracking-wider border-y border-slate-200">
+                                    <th class="py-3.5 px-4 font-bold">1. Phát hiện từ hồ sơ (Đầu vào)</th>
+                                    <th class="py-3.5 px-4 font-bold">2. Nhãn phân nhóm khoảng cách</th>
+                                    <th class="py-3.5 px-4 font-bold">3. Cách EDUPATH 9+ diễn giải (Chuẩn mực)</th>
+                                    <th class="py-3.5 px-4 font-bold">4. Thẻ hành động đề xuất (2–4 tuần)</th>
+                                    <th class="py-3.5 px-3 font-bold text-center">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="decisionMapTableBody" class="divide-y divide-slate-200/70 text-xs md:text-sm">
+                                <!-- Render từ JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Cảnh báo kiểm thử trường hợp thiếu thông tin (Mục 2.5) -->
+                    <div id="missingInfoAlertBox" class="bg-rose-50 border border-rose-200 rounded-xl p-4 flex items-start space-x-3">
+                        <i class="fas fa-shield-virus text-rose-600 text-lg mt-0.5"></i>
+                        <div class="text-xs text-rose-900 space-y-1">
+                            <div class="font-bold">Cơ chế Kiểm soát Rủi ro Tư vấn (Theo Mục 2.5 & 4.5 Thuyết minh):</div>
+                            <p>
+                                Khi hồ sơ có mục <b>"Chưa rõ diện dự thi / điều kiện liên thông"</b>, hệ thống bắt buộc gắn nhãn <b>"Cần xác minh điều kiện/hồ sơ"</b> và hướng dẫn học sinh liên hệ Phòng Đào tạo/Giáo vụ. Hệ thống tuyệt đối không tự động gán trạng thái "Đủ điều kiện" hoặc "Không đủ điều kiện".
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===================================================================== -->
+            <!-- TAB 4: HỢP PHẦN C - THẺ HÀNH ĐỘNG 2-4 TUẦN & ĐÁNH GIÁ LẠI (BƯỚC 4, 5)  -->
+            <!-- ===================================================================== -->
+            <section id="tab-action-cards" class="hidden space-y-6">
+                <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <span class="px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-md text-xs font-bold uppercase tracking-wide">Hợp phần C • Bước 4 & Bước 5</span>
+                        <h2 class="text-xl font-extrabold text-slate-800 mt-1">Thẻ Hành động Ngắn hạn (2–4 Tuần) & Xác nhận của Giáo viên</h2>
+                        <p class="text-xs md:text-sm text-slate-500 mt-0.5">
+                            Nguyên tắc: Chọn tối đa 02 ưu tiên trọng tâm trong 2–4 tuần, có tiêu chí hoàn thành, minh chứng, người hỗ trợ và bước đánh giá lại.
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="openAddTaskModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl shadow-sm transition-all flex items-center gap-1.5">
+                            <i class="fas fa-plus-circle"></i> Lập Thẻ hành động mới
+                        </button>
+                        <button onclick="exportActionCardsCSV()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl shadow-sm transition-all flex items-center gap-1.5">
+                            <i class="fas fa-file-csv"></i> Xuất CSV Thẻ hành động
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Danh sách Thẻ hành động chi tiết -->
+                <div id="actionCardsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <!-- Render từ JS -->
+                </div>
+
+                <!-- Bước 5: Phiếu Đánh giá lại cuối chu kỳ 2-4 tuần & Nhận xét của Giáo viên -->
+                <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100 space-y-4">
+                    <div class="flex items-center justify-between border-b pb-3">
+                        <div class="flex items-center space-x-2.5">
+                            <span class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-sm">5</span>
+                            <div>
+                                <h3 class="text-base font-bold text-slate-800">Bước 5 – Đánh giá lại & Phê duyệt của Giáo viên tư vấn</h3>
+                                <p class="text-xs text-slate-500">Kết quả đầu ra cuối chu kỳ là Phiếu 3 phần (Không dùng con số % hợp nghề tuyệt đối)</p>
+                            </div>
+                        </div>
+                        <span id="teacherStatusBadge" class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">
+                            Đã có nhận xét GV
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
+                            <div class="text-xs font-bold text-blue-700 uppercase">1. Mục tiêu còn phù hợp tìm hiểu?</div>
+                            <p id="evalPart1" class="text-xs md:text-sm text-slate-700 font-medium"></p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
+                            <div class="text-xs font-bold text-amber-700 uppercase">2. Nhiệm vụ học tập đã/đang làm</div>
+                            <p id="evalPart2" class="text-xs md:text-sm text-slate-700 font-medium"></p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
+                            <div class="text-xs font-bold text-rose-700 uppercase">3. Điều kiện đơn vị đã xác minh</div>
+                            <p id="evalPart3" class="text-xs md:text-sm text-slate-700 font-medium"></p>
+                        </div>
+                    </div>
+
+                    <!-- Khung nhập nhận xét dành cho Giáo viên -->
+                    <div class="bg-blue-50/60 border border-blue-200/80 rounded-xl p-4 space-y-3">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <label class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                                <i class="fas fa-user-check text-blue-600"></i>
+                                <span>Nhận xét & Quyết định can thiệp của Giáo viên (Thầy Phan Đăng Quang Trưởng / GV Tư vấn):</span>
+                            </label>
+                            <select id="teacherDecisionSelect" class="text-xs font-semibold bg-white border border-blue-300 rounded-lg px-3 py-1.5 text-blue-900">
+                                <option value="Tiếp tục mục tiêu & theo dõi thẻ hành động">✅ Quyết định: Tiếp tục mục tiêu & theo dõi thẻ hành động</option>
+                                <option value="Điều chỉnh độ khó kế hoạch (tránh quá tải)">🔄 Quyết định: Điều chỉnh kế hoạch 2 tuần (tránh tạo áp lực)</option>
+                                <option value="Chuyển bộ phận Đào tạo/Tuyển sinh xác minh">🏢 Quyết định: Chuyển bộ phận có thẩm quyền xác minh hồ sơ</option>
+                            </select>
+                        </div>
+                        <textarea id="teacherReviewInput" rows="2" class="w-full p-3 text-xs md:text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500" placeholder="Nhập nhận xét của giáo viên chủ nhiệm / giáo viên bộ môn..."></textarea>
+                        <div class="flex justify-end">
+                            <button onclick="saveTeacherReview()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl shadow-sm transition-all">
+                                <i class="fas fa-check-double mr-1"></i> Xác nhận & Lưu nhận xét Giáo viên
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===================================================================== -->
+            <!-- TAB 5: BỘ CA KIỂM THỬ GIẢ ĐỊNH (06 CA HS-01 ĐẾN HS-06) & VĂN BẢN       -->
+            <!-- ===================================================================== -->
+            <section id="tab-cases" class="hidden space-y-6">
+                <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <span class="px-2.5 py-1 bg-purple-100 text-purple-700 rounded-md text-xs font-bold uppercase tracking-wide">Mục 2.3 & 2.5 Thuyết minh dự án</span>
+                        <h2 class="text-xl font-extrabold text-slate-800 mt-1">Bộ Ca Kiểm thử Giả định (06 Tình huống Điển hình Hệ 9+)</h2>
+                        <p class="text-xs md:text-sm text-slate-500 mt-0.5">
+                            Dùng để trình diễn quy trình và kiểm thử tính nhất quán: Đầu vào – Nhãn vấn đề – Thẻ hành động (Bảo vệ dữ liệu cá nhân học sinh).
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="openNewStudentModal()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold rounded-xl shadow-sm transition-all flex items-center gap-1.5">
+                            <i class="fas fa-user-plus"></i> Thêm Ca giả định mới
+                        </button>
+                        <button onclick="exportAllCasesCSV()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl shadow-sm transition-all flex items-center gap-1.5">
+                            <i class="fas fa-file-csv"></i> Xuất toàn bộ 06 Ca (.CSV)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Danh sách thẻ 6 Ca kiểm thử giả định -->
+                <div id="simulatedCasesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <!-- Render từ JS -->
+                </div>
+            </section>
+
+            <!-- ===================================================================== -->
+            <!-- TAB 6: TƯ VẤN, ĐỐI SÁNH GIẢI PHÁP & THÔNG TIN DỰ ÁN DỰ THI             -->
+            <!-- ===================================================================== -->
+            <section id="tab-consultation" class="hidden space-y-6">
+                <!-- Đối sánh trung thực với giải pháp hiện có (Mục 3.1 Thuyết minh) -->
+                <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100 space-y-4">
+                    <div>
+                        <span class="px-2.5 py-1 bg-sky-100 text-sky-700 rounded-md text-xs font-bold uppercase tracking-wide">Phần II • Mục 3.1 & 3.2 Thuyết minh</span>
+                        <h2 class="text-xl font-extrabold text-slate-800 mt-1">Đối sánh Giải pháp Hiện có & Điểm mới của EDUPATH 9+</h2>
+                        <p class="text-xs md:text-sm text-slate-500">
+                            EDUPATH 9+ tập trung vào "điểm rẽ quyết định" của học sinh hệ 9+ tại Trường CĐ Công nghệ TP.HCM - Phân hiệu Đồng Nai.
+                        </p>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs md:text-sm">
+                            <thead>
+                                <tr class="bg-slate-50 text-slate-700 border-y border-slate-200">
+                                    <th class="py-3 px-4 font-bold">Giải pháp tham chiếu</th>
+                                    <th class="py-3 px-4 font-bold">Chức năng đã công bố trên thị trường</th>
+                                    <th class="py-3 px-4 font-bold text-blue-700">Trọng tâm khác biệt của EDUPATH 9+</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200/70">
+                                <tr>
+                                    <td class="py-3.5 px-4 font-bold text-slate-800">Edu-index / Hướng nghiệp 360</td>
+                                    <td class="py-3.5 px-4 text-slate-600">Trắc nghiệm RIASEC, nhập điểm, lộ trình điểm, khoảng cách với nguyện vọng, lớp học dành cho giáo viên.</td>
+                                    <td class="py-3.5 px-4 text-slate-800 bg-blue-50/40 font-medium">Không cạnh tranh bằng điểm dự phóng; ưu tiên kiểm tra lộ trình học thực tế hệ 9+, phân loại việc cần củng cố và việc cần xác minh, xuất thẻ hành động.</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3.5 px-4 font-bold text-slate-800">JobTest</td>
+                                    <td class="py-3.5 px-4 text-slate-600">Khám phá sở thích/năng lực, tư vấn hướng nghiệp, đề xuất phát triển kỹ năng.</td>
+                                    <td class="py-3.5 px-4 text-slate-800 bg-blue-50/40 font-medium">Không lập bộ trắc nghiệm nghề mới; dùng tình huống và biểu mẫu can thiệp học tập ngắn hạn (2–4 tuần) có giáo viên xác nhận.</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3.5 px-4 font-bold text-slate-800">vnEdu Connect</td>
+                                    <td class="py-3.5 px-4 text-slate-600">Kết nối nhà trường – gia đình, theo dõi kết quả học tập và thông báo.</td>
+                                    <td class="py-3.5 px-4 text-slate-800 bg-blue-50/40 font-medium">Không quản lý học bạ hay thay phần mềm trường; chỉ đối chiếu dữ liệu được cung cấp hợp lệ để hỗ trợ một quyết định giáo dục.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Thông tin Nhóm tác giả & Hồ sơ đăng ký dự thi -->
+                <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100 space-y-4">
+                    <h3 class="text-base font-extrabold text-slate-800 flex items-center gap-2">
+                        <i class="fas fa-award text-amber-500 text-lg"></i>
+                        <span>Thông tin Dự án & Nhóm Tác giả (Bảng A - Khối Cán bộ quản lý và Giáo viên)</span>
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs md:text-sm">
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/70 space-y-2">
+                            <div class="font-bold text-blue-800">Đơn vị & Chuyên đề dự thi:</div>
+                            <p><b>Cuộc thi:</b> Sáng tạo khoa học công nghệ và kỹ thuật trong Giáo dục và Đào tạo trên địa bàn phường Trảng Bom năm 2026.</p>
+                            <p><b>Chuyên đề 1:</b> Ứng dụng Trí tuệ nhân tạo (AI) và Nền tảng số trong giảng dạy, học tập.</p>
+                            <p><b>Đơn vị:</b> Trường Cao đẳng Công nghệ TP. Hồ Chí Minh – Phân hiệu tại Đồng Nai.</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1.5">
+                            <div class="font-bold text-blue-800">Danh sách Nhóm tác giả (05 thành viên):</div>
+                            <p>1. <b>Phan Đăng Quang Trưởng</b> – Trưởng nhóm (GV Hóa học) • SĐT: 0911992402</p>
+                            <p>2. <b>Nguyễn Thị Ngọc Huyền</b> – Xây dựng rubric định hướng khảo sát</p>
+                            <p>3. <b>Lê Đình Đức</b> – Thống kê dữ liệu và quản trị dữ liệu</p>
+                            <p>4. <b>Trần Nguyễn Ngọc Thoa</b> – Thiết kế web</p>
+                            <p>5. <b>Nguyễn Văn Thành</b> – Thiết kế web</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ================= MODAL THÊM DÒNG ĐỐI CHIẾU KHOẢNG CÁCH (HỢP PHẦN B) ================= -->
+    <div id="addGapModal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b pb-3">
+                <h3 class="text-base font-bold text-slate-800">Thêm Phát hiện & Đối chiếu Khoảng cách (Hợp phần B)</h3>
+                <button onclick="closeModal('addGapModal')" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="space-y-3 text-xs md:text-sm">
+                <div>
+                    <label class="font-semibold text-slate-700 block mb-1">1. Phát hiện từ hồ sơ học sinh:</label>
+                    <input type="text" id="newGapFinding" placeholder="VD: Điểm Tiếng Anh đạt 5.5, cần chứng chỉ/điểm xét tuyển..." class="w-full px-3 py-2 border rounded-xl">
+                </div>
+                <div>
+                    <label class="font-semibold text-slate-700 block mb-1">2. Gắn nhãn nghiệp vụ (3 nhóm chuẩn):</label>
+                    <select id="newGapCategory" class="w-full px-3 py-2 border rounded-xl font-medium">
+                        <option value="Cần củng cố năng lực">🟠 Cần củng cố năng lực</option>
+                        <option value="Cần tìm hiểu lựa chọn">🔵 Cần tìm hiểu lựa chọn</option>
+                        <option value="Cần xác minh điều kiện/hồ sơ">🔴 Cần xác minh điều kiện/hồ sơ</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="font-semibold text-slate-700 block mb-1">3. Cách EDUPATH 9+ diễn giải (Không phán xét tuyệt đối):</label>
+                    <input type="text" id="newGapInterpretation" placeholder="VD: Xếp nhóm cần củng cố, không tự kết luận trượt..." class="w-full px-3 py-2 border rounded-xl">
+                </div>
+                <div>
+                    <label class="font-semibold text-slate-700 block mb-1">4. Thẻ hành động đề xuất (2–4 tuần):</label>
+                    <input type="text" id="newGapAction" placeholder="VD: Ôn tập chuyên đề từ vựng 15 phút/ngày cùng GV bộ môn" class="w-full px-3 py-2 border rounded-xl">
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeModal('addGapModal')" class="px-4 py-2 rounded-xl border text-xs font-semibold text-slate-600">Hủy</button>
+                <button onclick="submitNewGap()" class="px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold">Lưu vào Bản đồ 9+</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL THÊM THẺ HÀNH ĐỘNG 2-4 TUẦN (HỢP PHẦN C) ================= -->
+    <div id="addTaskModal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b pb-3">
+                <h3 class="text-base font-bold text-slate-800">Lập Thẻ Hành động Ngắn hạn (2–4 Tuần)</h3>
+                <button onclick="closeModal('addTaskModal')" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="space-y-3 text-xs md:text-sm">
+                <div>
+                    <label class="font-semibold text-slate-700 block mb-1">Tên nhiệm vụ cụ thể:</label>
+                    <input type="text" id="newTaskTitle" placeholder="VD: Giải bộ 20 câu trắc nghiệm Toán hàm số & nhờ GV sửa" class="w-full px-3 py-2 border rounded-xl">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="font-semibold text-slate-700 block mb-1">Hạn chót kiểm tra:</label>
+                        <input type="text" id="newTaskDue" value="25/11/2026" class="w-full px-3 py-2 border rounded-xl">
+                    </div>
+                    <div>
+                        <label class="font-semibold text-slate-700 block mb-1">Nhãn phân loại:</label>
+                        <select id="newTaskTag" class="w-full px-3 py-2 border rounded-xl">
+                            <option value="Quan trọng">Quan trọng</option>
+                            <option value="Học tập">Học tập</option>
+                            <option value="Xác minh">Xác minh</option>
+                            <option value="Cá nhân">Cá nhân</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="font-semibold text-slate-700 block mb-1">Người hỗ trợ / Phối hợp kiểm tra:</label>
+                    <input type="text" id="newTaskSupporter" placeholder="VD: GV bộ môn Toán / Phòng Đào tạo" class="w-full px-3 py-2 border rounded-xl">
+                </div>
+                <div>
+                    <label class="font-semibold text-slate-700 block mb-1">Tiêu chí hoàn thành / Minh chứng:</label>
+                    <input type="text" id="newTaskCriteria" placeholder="VD: Nộp bài giải có chữ ký xác nhận của giáo viên" class="w-full px-3 py-2 border rounded-xl">
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeModal('addTaskModal')" class="px-4 py-2 rounded-xl border text-xs font-semibold text-slate-600">Hủy</button>
+                <button onclick="submitNewTask()" class="px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold">Thêm Thẻ hành động</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL THÊM CA GIẢ ĐỊNH MỚI ================= -->
+    <div id="newStudentModal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b pb-3">
+                <h3 class="text-base font-bold text-slate-800">Tạo Ca Kiểm thử Giả định Mới (Hệ 9+)</h3>
+                <button onclick="closeModal('newStudentModal')" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="space-y-3 text-xs md:text-sm">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="font-semibold text-slate-700 block mb-1">Mã hồ sơ giả định:</label>
+                        <input type="text" id="createStudentCode" placeholder="VD: HS-07" class="w-full px-3 py-2 border rounded-xl">
+                    </div>
+                    <div>
+                        <label class="font-semibold text-slate-700 block mb-1">Lớp & Hệ đào tạo:</label>
+                        <input type="text" id="createStudentStream" value="Lớp 12 Hệ 9+ (CĐ Công nghệ)" class="w-full px-3 py-2 border rounded-xl">
+                    </div>
+                </div>
+                <div>
+                    <label class="font-semibold text-slate-700 block mb-1">Mục tiêu nhóm ngành muốn tìm hiểu:</label>
+                    <input type="text" id="createStudentGoal" placeholder="VD: Công nghệ thông tin / Điện công nghiệp" class="w-full px-3 py-2 border rounded-xl">
+                </div>
+                <div class="grid grid-cols-3 gap-2">
+                    <div>
+                        <label class="font-semibold text-slate-700 block mb-1">Điểm Toán:</label>
+                        <input type="number" step="0.1" id="createScoreMath" value="6.0" class="w-full px-3 py-1.5 border rounded-xl">
+                    </div>
+                    <div>
+                        <label class="font-semibold text-slate-700 block mb-1">Điểm Văn:</label>
+                        <input type="number" step="0.1" id="createScoreLit" value="6.5" class="w-full px-3 py-1.5 border rounded-xl">
+                    </div>
+                    <div>
+                        <label class="font-semibold text-slate-700 block mb-1">Điểm Lý/Nghề:</label>
+                        <input type="number" step="0.1" id="createScorePhy" value="7.5" class="w-full px-3 py-1.5 border rounded-xl">
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeModal('newStudentModal')" class="px-4 py-2 rounded-xl border text-xs font-semibold text-slate-600">Hủy</button>
+                <button onclick="submitNewStudentCase()" class="px-4 py-2 rounded-xl bg-purple-600 text-white text-xs font-semibold">Tạo Hồ sơ Giả định</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL XEM CHI TIẾT VĂN BẢN PHÁP LÝ ================= -->
+    <div id="regulationModal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b pb-3">
+                <h3 id="regModalTitle" class="text-base font-bold text-slate-800">Chi tiết Văn bản Đối chiếu</h3>
+                <button onclick="closeModal('regulationModal')" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="regModalBody" class="text-xs md:text-sm text-slate-600 space-y-3 leading-relaxed"></div>
+            <div class="flex justify-end pt-2">
+                <button onclick="closeModal('regulationModal')" class="px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold">Đã hiểu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= TOAST THÔNG BÁO GÓC MÀN HÌNH ================= -->
+    <div id="toastBox" class="fixed bottom-5 right-5 z-50 hidden bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center space-x-3 text-xs md:text-sm border border-slate-700">
+        <i class="fas fa-check-circle text-emerald-400 text-lg"></i>
+        <span id="toastMessage">Đã thực hiện thành công!</span>
+    </div>
+
+    <!-- ================= JAVASCRIPT LOGIC TOÀN HỆ THỐNG ================= -->
+    <script>
+        // 1. DỮ LIỆU MẶC ĐỊNH: 06 CA KIỂM THỬ GIẢ ĐỊNH (Bám sát Mục 2.3 & 2.5 file thuyết minh 123.docx)
+        const DEFAULT_STUDENTS = [
+            {
+                id: "HS-01",
+                name: "Học sinh mã HS-01 (Ca chuẩn thuyết minh)",
+                stream: "Lớp 12 Hệ 9+ • Trung cấp Kỹ thuật Ô tô",
+                goal1: "Kỹ thuật Ô tô (Tìm hiểu liên thông CĐ/ĐH)",
+                goal2: "Cơ khí động lực & Bảo dưỡng công nghiệp",
+                reason: "Hứng thú hoạt động thực hành xưởng, kết quả Vật lí và Hóa học khá; muốn tìm hiểu khả năng học tiếp nhưng chưa xác minh đầy đủ diện dự thi và điều kiện đầu vào.",
+                verifyStatus: "Cần xác minh tại đơn vị",
+                kpiCourses: 12,
+                kpiAvgProgress: "68%",
+                kpiDaysLeft: 28,
+                kpiHighlights: 5,
+                radar: {
+                    logic: 7.5,
+                    creativity: 6.0,
+                    communication: 8.0,
+                    teamwork: 7.0,
+                    timeMgmt: 6.5,
+                    expertise: 7.8
+                },
+                radarNote: "Bạn có thế mạnh nổi bật ở Kỹ năng thực hành (7.8) và Giải quyết vấn đề (8.0). Đây là tín hiệu tích cực để tìm hiểu nhóm ngành kỹ thuật ô tô, không phải kết luận chắc chắn 'hợp nghề 100%'.",
+                subjects: [
+                    { name: "Toán học", icon: "fa-laptop-code", color: "#3b82f6", score: 5.2, target: 7.0, progress: 70, status: "Cần cải thiện" },
+                    { name: "Ngữ văn", icon: "fa-file-alt", color: "#10b981", score: 6.7, target: 7.0, progress: 55, status: "Cần cải thiện" },
+                    { name: "Vật lý", icon: "fa-flask", color: "#f97316", score: 7.4, target: 7.5, progress: 40, status: "Cần cải thiện" },
+                    { name: "Hóa học", icon: "fa-dna", color: "#8b5cf6", score: 7.1, target: 7.5, progress: 65, status: "Cần cải thiện" },
+                    { name: "Sinh học / Nghề", icon: "fa-leaf", color: "#14b8a6", score: 8.0, target: 8.0, progress: 50, status: "Cần cải thiện" },
+                    { name: "Tiếng Anh", icon: "fa-globe", color: "#ec4899", score: 5.8, target: 6.5, progress: 60, status: "Cần cải thiện" }
+                ],
+                gaps: [
+                    {
+                        finding: "Có hứng thú nghề kỹ thuật; kết quả Vật lí (7.4) và Hóa học (7.1) tương đối khá.",
+                        category: "Cần tìm hiểu lựa chọn",
+                        interpretation: "Đây là tín hiệu để tìm hiểu nhóm ngành kỹ thuật ô tô, không phải kết luận chắc chắn 'hợp nghề'.",
+                        action: "Tham khảo chương trình đào tạo và trao đổi trực tiếp với giáo viên nghề."
+                    },
+                    {
+                        finding: "Điểm Toán hiện tại (5.2) thấp hơn mục tiêu học tập cá nhân (7.0).",
+                        category: "Cần củng cố năng lực",
+                        interpretation: "Xếp nhóm 'cần củng cố năng lực', không tự kết luận khả năng tốt nghiệp hay trúng tuyển.",
+                        action: "Lập lịch ôn 2 tuần và giải một bộ bài kiểm tra phù hợp, nhờ giáo viên xác nhận."
+                    },
+                    {
+                        finding: "Chưa rõ diện dự thi tốt nghiệp THPT và hồ sơ xét tuyển phù hợp với lộ trình 9+.",
+                        category: "Cần xác minh điều kiện/hồ sơ",
+                        interpretation: "Xếp nhóm 'cần xác minh', không tự động gán trạng thái đủ/không đủ điều kiện.",
+                        action: "Liên hệ bộ phận phụ trách đào tạo/thi của Phân hiệu để đối chiếu quy định và hồ sơ."
+                    }
+                ],
+                tasks: [
+                    { id: 101, title: "Hoàn thành bài tập Toán chương 3 (Ôn mục tiêu từ 5.2 lên 6.5+)", due: "Hôm nay", tag: "Quan trọng", done: false, supporter: "GV Toán", criteria: "Giải xong bộ 15 bài tập cơ bản & có chữ ký GV" },
+                    { id: 102, title: "Ôn tập Ngữ văn: Tác phẩm trọng tâm & kỹ năng đọc hiểu", due: "15/11/2026", tag: "Học tập", done: false, supporter: "GV Ngữ văn", criteria: "Hoàn thành 01 đề luyện viết đoạn văn" },
+                    { id: 103, title: "Làm đề thi thử môn Tiếng Anh & rà soát từ vựng kỹ thuật", due: "16/11/2026", tag: "Hoàn thành", done: true, supporter: "Tự học & Nhóm bạn", criteria: "Đạt tối thiểu 30/50 câu trắc nghiệm" },
+                    { id: 104, title: "Đọc tài liệu chương trình đào tạo ngành Kỹ thuật Ô tô", due: "18/11/2026", tag: "Cá nhân", done: false, supporter: "GV Nghề Ô tô", criteria: "Ghi chú 3 môn chuyên ngành cốt lõi cần chuẩn bị" },
+                    { id: 105, title: "Liên hệ Phòng Đào tạo xác minh diện dự thi THPT (TT 24/2024 & 13/2026)", due: "20/11/2026", tag: "Sự kiện", done: false, supporter: "Phòng Đào tạo / GVCN", criteria: "Xác nhận rõ danh mục giấy tờ cần nộp" }
+                ],
+                teacherDecision: "Tiếp tục mục tiêu & theo dõi thẻ hành động",
+                teacherReview: "Học sinh HS-01 có thái độ thực hành tốt. Trong 2 tuần tới chỉ tập trung ưu tiên: (1) Củng cố môn Toán phần đại số cơ bản và (2) Lên phòng Đào tạo xác minh hồ sơ dự thi. Không ôm đồm thêm lịch học quá tải."
+            },
+            {
+                id: "HS-02",
+                name: "Học sinh mã HS-02 (Khá thực hành - Lệch ngoại ngữ)",
+                stream: "Lớp 12 Hệ 9+ • Điện Công nghiệp & Dân dụng",
+                goal1: "Công nghệ Kỹ thuật Điện - Điện tử",
+                goal2: "Tự động hóa công nghiệp",
+                reason: "Thích lắp đặt mạch điện và điều khiển PLC; điểm thực hành nghề đạt 8.5 nhưng lo ngại môn Tiếng Anh và thủ tục xét liên thông.",
+                verifyStatus: "Đang chờ Phòng Đào tạo phản hồi",
+                kpiCourses: 11,
+                kpiAvgProgress: "74%",
+                kpiDaysLeft: 28,
+                kpiHighlights: 4,
+                radar: { logic: 8.0, creativity: 6.8, communication: 6.5, teamwork: 7.5, timeMgmt: 7.0, expertise: 8.5 },
+                radarNote: "Thế mạnh rõ rệt ở Tư duy logic (8.0) và Thực hành nghề Điện (8.5). Cần củng cố ngoại ngữ và kỹ năng trình bày hồ sơ.",
+                subjects: [
+                    { name: "Toán học", icon: "fa-laptop-code", color: "#3b82f6", score: 7.2, target: 7.5, progress: 78, status: "Đạt yêu cầu" },
+                    { name: "Ngữ văn", icon: "fa-file-alt", color: "#10b981", score: 6.2, target: 6.5, progress: 65, status: "Cần cải thiện" },
+                    { name: "Vật lý", icon: "fa-flask", color: "#f97316", score: 7.8, target: 8.0, progress: 82, status: "Thế mạnh" },
+                    { name: "Hóa học", icon: "fa-dna", color: "#8b5cf6", score: 6.8, target: 7.0, progress: 70, status: "Đạt yêu cầu" },
+                    { name: "Thực hành Điện", icon: "fa-leaf", color: "#14b8a6", score: 8.5, target: 8.5, progress: 88, status: "Thế mạnh" },
+                    { name: "Tiếng Anh", icon: "fa-globe", color: "#ec4899", score: 4.5, target: 6.0, progress: 42, status: "Cần cải thiện" }
+                ],
+                gaps: [
+                    {
+                        finding: "Điểm Vật lí (7.8) và Thực hành Điện (8.5) đạt mức tốt.",
+                        category: "Cần tìm hiểu lựa chọn",
+                        interpretation: "Tín hiệu thuận lợi để tìm hiểu sâu lộ trình liên thông ngành Điện - Tự động hóa.",
+                        action: "Tìm hiểu đề án tuyển sinh liên thông tại trường CĐ Công nghệ TP.HCM."
+                    },
+                    {
+                        finding: "Môn Tiếng Anh (4.5) còn khoảng cách khá xa so với mục tiêu (6.0).",
+                        category: "Cần củng cố năng lực",
+                        interpretation: "Nhãn 'cần củng cố năng lực' để có kế hoạch ôn tập vừa sức.",
+                        action: "Ôn 3 chuyên đề ngữ pháp cơ bản trong 3 tuần dưới sự hướng dẫn của GV Tiếng Anh."
+                    },
+                    {
+                        finding: "Đang chờ xác nhận môn thi tự chọn trong kỳ thi tốt nghiệp THPT.",
+                        category: "Cần xác minh điều kiện/hồ sơ",
+                        interpretation: "Cần đối chiếu Thông tư 24/2024/TT-BGDĐT và 13/2026/TT-BGDĐT.",
+                        action: "Nhận phiếu phản hồi chính thức từ Giáo vụ Phân hiệu Đồng Nai."
+                    }
+                ],
+                tasks: [
+                    { id: 201, title: "Ôn tập 3 chủ đề ngữ pháp Tiếng Anh cơ bản", due: "18/11/2026", tag: "Quan trọng", done: false, supporter: "GV Tiếng Anh", criteria: "Làm đạt 6.0+ bài kiểm tra ngắn 15 phút" },
+                    { id: 202, title: "Xác nhận tổ hợp môn đăng ký dự thi tốt nghiệp tại Giáo vụ", due: "22/11/2026", tag: "Sự kiện", done: true, supporter: "GVCN & Giáo vụ", criteria: "Có biên nhận đăng ký hợp lệ" }
+                ],
+                teacherDecision: "Tiếp tục mục tiêu & theo dõi thẻ hành động",
+                teacherReview: "Học sinh có nền tảng Toán - Lý - Nghề vững. Khuyến khích duy trì nhịp học hiện tại và bổ trợ Tiếng Anh cơ bản."
+            },
+            {
+                id: "HS-03",
+                name: "Học sinh mã HS-03 (Phân vân 2 ngành - Thiếu thông tin)",
+                stream: "Lớp 12 Hệ 9+ • Công nghệ Thông tin (Ứng dụng PM)",
+                goal1: "Thiết kế Đồ họa & Truyền thông đa phương tiện",
+                goal2: "Lập trình Web & Quản trị mạng",
+                reason: "Yêu thích sáng tạo hình ảnh nhưng chưa rõ nên đi làm ngay sau tốt nghiệp trung cấp 9+ hay học liên thông lên Cao đẳng.",
+                verifyStatus: "Cần xác minh tại đơn vị",
+                kpiCourses: 12,
+                kpiAvgProgress: "64%",
+                kpiDaysLeft: 28,
+                kpiHighlights: 6,
+                radar: { logic: 6.8, creativity: 8.6, communication: 7.5, teamwork: 7.2, timeMgmt: 5.8, expertise: 7.4 },
+                radarNote: "Chỉ số Sáng tạo (8.6) và Giao tiếp (7.5) nổi bật. Cần cải thiện kỹ năng Quản lý thời gian (5.8) và xác minh điều kiện liên thông.",
+                subjects: [
+                    { name: "Toán học", icon: "fa-laptop-code", color: "#3b82f6", score: 6.0, target: 7.0, progress: 60, status: "Cần cải thiện" },
+                    { name: "Ngữ văn", icon: "fa-file-alt", color: "#10b981", score: 7.5, target: 7.5, progress: 78, status: "Đạt yêu cầu" },
+                    { name: "Vật lý", icon: "fa-flask", color: "#f97316", score: 6.2, target: 6.8, progress: 58, status: "Cần cải thiện" },
+                    { name: "Hóa học", icon: "fa-dna", color: "#8b5cf6", score: 6.5, target: 7.0, progress: 64, status: "Cần cải thiện" },
+                    { name: "Tin học nghề", icon: "fa-leaf", color: "#14b8a6", score: 8.2, target: 8.5, progress: 85, status: "Thế mạnh" },
+                    { name: "Tiếng Anh", icon: "fa-globe", color: "#ec4899", score: 6.8, target: 7.5, progress: 70, status: "Đạt yêu cầu" }
+                ],
+                gaps: [
+                    {
+                        finding: "Đang phân vân giữa đi làm kỹ thuật viên đồ họa ngay hay học tiếp Cao đẳng.",
+                        category: "Cần tìm hiểu lựa chọn",
+                        interpretation: "Cần so sánh lộ trình học tập - tài chính - thời gian của 2 phương án.",
+                        action: "Trao đổi với cố vấn học tập và cựu học sinh hệ 9+ khoa CNTT."
+                    },
+                    {
+                        finding: "Thường xuyên nộp bài tập văn hóa sát hạn chót (Quản lý thời gian 5.8).",
+                        category: "Cần củng cố năng lực",
+                        interpretation: "Nguy cơ quá tải khi vừa hoàn thiện đồ án nghề vừa ôn văn hóa lớp 12.",
+                        action: "Lập thời khóa biểu 2 tuần tách biệt giờ học nghề và giờ ôn văn hóa."
+                    }
+                ],
+                tasks: [
+                    { id: 301, title: "Hoàn thiện 01 sản phẩm Portfolio đồ họa cơ bản", due: "19/11/2026", tag: "Cá nhân", done: true, supporter: "GV Khoa CNTT", criteria: "Được GV bộ môn nhận xét đạt yêu cầu" },
+                    { id: 302, title: "Xác minh điều kiện chuyển tiếp từ Trung cấp 9+ lên Cao đẳng tại trường", due: "24/11/2026", tag: "Quan trọng", done: false, supporter: "Phòng Tuyển sinh", criteria: "Nắm rõ thời gian xét tuyển và học phí" }
+                ],
+                teacherDecision: "Điều chỉnh độ khó kế hoạch (tránh quá tải)",
+                teacherReview: "Học sinh cần ưu tiên hoàn thành chương trình văn hóa lớp 12 đúng hạn trước khi nhận thêm dự án thiết kế bên ngoài."
+            },
+            {
+                id: "HS-04",
+                name: "Học sinh mã HS-04 (Nguy cơ quá tải lịch học)",
+                stream: "Lớp 12 Hệ 9+ • Hóa phân tích & Kiểm nghiệm",
+                goal1: "Công nghệ Hóa học & Thực phẩm",
+                goal2: "Kỹ thuật viên Kiểm nghiệm chất lượng (QA/QC)",
+                reason: "Yêu thích thí nghiệm Hóa học (Hóa 8.1) nhưng điểm Toán và Lý còn yếu, tự đặt mục tiêu ôn thi quá cao gây căng thẳng.",
+                verifyStatus: "Đã xác minh hợp lệ tại đơn vị",
+                kpiCourses: 12,
+                kpiAvgProgress: "62%",
+                kpiDaysLeft: 28,
+                kpiHighlights: 3,
+                radar: { logic: 6.5, creativity: 6.2, communication: 7.0, teamwork: 7.8, timeMgmt: 5.5, expertise: 8.2 },
+                radarNote: "Thế mạnh nổi bật ở Hóa học và Thực hành phòng thí nghiệm (8.2). Cần điều chỉnh mục tiêu ôn tập Toán - Lý thực tế hơn.",
+                subjects: [
+                    { name: "Toán học", icon: "fa-laptop-code", color: "#3b82f6", score: 5.0, target: 6.5, progress: 52, status: "Cần cải thiện" },
+                    { name: "Ngữ văn", icon: "fa-file-alt", color: "#10b981", score: 6.8, target: 7.0, progress: 70, status: "Đạt yêu cầu" },
+                    { name: "Vật lý", icon: "fa-flask", color: "#f97316", score: 5.1, target: 6.5, progress: 50, status: "Cần cải thiện" },
+                    { name: "Hóa học", icon: "fa-dna", color: "#8b5cf6", score: 8.1, target: 8.5, progress: 86, status: "Thế mạnh" },
+                    { name: "Sinh học", icon: "fa-leaf", color: "#14b8a6", score: 7.4, target: 7.5, progress: 75, status: "Đạt yêu cầu" },
+                    { name: "Tiếng Anh", icon: "fa-globe", color: "#ec4899", score: 5.5, target: 6.0, progress: 58, status: "Cần cải thiện" }
+                ],
+                gaps: [
+                    {
+                        finding: "Hóa học (8.1) và Sinh học (7.4) đạt kết quả tốt; Toán (5.0) và Lý (5.1) còn thấp.",
+                        category: "Cần củng cố năng lực",
+                        interpretation: "Nên tập trung củng cố kiến thức nền tảng Toán và cân nhắc tổ hợp có Hóa - Sinh.",
+                        action: "Ôn tập nắm chắc điểm liệt và câu hỏi thông hiểu môn Toán trong 3 tuần."
+                    }
+                ],
+                tasks: [
+                    { id: 401, title: "Ôn tập chuyên đề Hóa hữu cơ & thực hành chuẩn độ cùng Thầy Trưởng", due: "17/11/2026", tag: "Học tập", done: true, supporter: "Thầy Phan Đăng Quang Trưởng", criteria: "Hoàn thành bài báo cáo thực hành" },
+                    { id: 402, title: "Củng cố 5 dạng toán cơ bản phục vụ xét tốt nghiệp", due: "26/11/2026", tag: "Quan trọng", done: false, supporter: "GV Toán", criteria: "Đạt từ 6.0 điểm bài kiểm tra định kỳ" }
+                ],
+                teacherDecision: "Điều chỉnh độ khó kế hoạch (tránh quá tải)",
+                teacherReview: "Đã tư vấn học sinh giảm bớt áp lực, tập trung thế mạnh Hóa - Sinh và củng cố Toán mức cơ bản 6.5 điểm."
+            },
+            {
+                id: "HS-05",
+                name: "Học sinh mã HS-05 (Cần xác minh hồ sơ chuyển đổi)",
+                stream: "Lớp 12 Hệ 9+ • Quản trị Kinh doanh / Kế toán",
+                goal1: "Kế toán doanh nghiệp & Thuế",
+                goal2: "Logistics và Quản lý chuỗi cung ứng",
+                reason: "Cẩn thận với số liệu, điểm Văn và Toán khá đều nhưng thiếu thông tin về quy chế cộng điểm nghề và hồ sơ dự thi.",
+                verifyStatus: "Cần xác minh tại đơn vị",
+                kpiCourses: 10,
+                kpiAvgProgress: "71%",
+                kpiDaysLeft: 28,
+                kpiHighlights: 5,
+                radar: { logic: 7.4, creativity: 6.5, communication: 7.8, teamwork: 8.0, timeMgmt: 7.6, expertise: 7.5 },
+                radarNote: "Kỹ năng Làm việc nhóm (8.0) và Quản lý thời gian (7.6) rất tốt. Cần ưu tiên xác minh thủ tục hành chính trước kỳ thi.",
+                subjects: [
+                    { name: "Toán học", icon: "fa-laptop-code", color: "#3b82f6", score: 6.9, target: 7.5, progress: 72, status: "Đạt yêu cầu" },
+                    { name: "Ngữ văn", icon: "fa-file-alt", color: "#10b981", score: 7.3, target: 7.5, progress: 76, status: "Đạt yêu cầu" },
+                    { name: "Vật lý", icon: "fa-flask", color: "#f97316", score: 6.0, target: 6.5, progress: 60, status: "Cần cải thiện" },
+                    { name: "Hóa học", icon: "fa-dna", color: "#8b5cf6", score: 6.2, target: 6.5, progress: 62, status: "Cần cải thiện" },
+                    { name: "Nghiệp vụ Kế toán", icon: "fa-leaf", color: "#14b8a6", score: 8.0, target: 8.0, progress: 82, status: "Thế mạnh" },
+                    { name: "Tiếng Anh", icon: "fa-globe", color: "#ec4899", score: 6.6, target: 7.0, progress: 68, status: "Cần cải thiện" }
+                ],
+                gaps: [
+                    {
+                        finding: "Chưa nắm rõ quy định mới về điểm khuyến khích nghề trong Thông tư 24/2024 & 13/2026.",
+                        category: "Cần xác minh điều kiện/hồ sơ",
+                        interpretation: "Không suy diễn theo quy chế cũ; bắt buộc kiểm tra văn bản hiện hành.",
+                        action: "Tra cứu Thông tư 13/2026/TT-BGDĐT và xác nhận với cán bộ khảo thí nhà trường."
+                    }
+                ],
+                tasks: [
+                    { id: 501, title: "Xác minh quy định hồ sơ dự thi tại bộ phận Khảo thí & Đào tạo", due: "19/11/2026", tag: "Quan trọng", done: false, supporter: "Phòng Đào tạo", criteria: "Có phiếu hướng dẫn hồ sơ chính thức" }
+                ],
+                teacherDecision: "Chuyển bộ phận Đào tạo/Tuyển sinh xác minh",
+                teacherReview: "Học lực ổn định, giáo viên chủ nhiệm đã hướng dẫn em liên hệ bộ phận Đào tạo để đối chiếu hồ sơ dự thi."
+            },
+            {
+                id: "HS-06",
+                name: "Học sinh mã HS-06 (Mục tiêu Đi làm kỹ thuật viên ngay)",
+                stream: "Lớp 12 Hệ 9+ • Cơ khí Cắt gọt kim loại (CNC)",
+                goal1: "Hoàn thành tốt nghiệp 9+ & Làm việc tại KCN Trảng Bom",
+                goal2: "Học liên thông Cao đẳng hệ vừa làm vừa học",
+                reason: "Tay nghề thực hành máy CNC rất tốt (8.8), muốn đi làm tại doanh nghiệp ở Đồng Nai ngay sau khi hoàn tất chương trình.",
+                verifyStatus: "Đã xác minh hợp lệ tại đơn vị",
+                kpiCourses: 12,
+                kpiAvgProgress: "76%",
+                kpiDaysLeft: 28,
+                kpiHighlights: 3,
+                radar: { logic: 7.2, creativity: 7.0, communication: 6.8, teamwork: 7.8, timeMgmt: 7.4, expertise: 8.8 },
+                radarNote: "Năng lực thực hành nghề CNC đạt 8.8. Phù hợp tìm hiểu lộ trình vừa hoàn thành tốt nghiệp vừa kết nối doanh nghiệp thực tập.",
+                subjects: [
+                    { name: "Toán học", icon: "fa-laptop-code", color: "#3b82f6", score: 6.4, target: 6.5, progress: 74, status: "Đạt yêu cầu" },
+                    { name: "Ngữ văn", icon: "fa-file-alt", color: "#10b981", score: 6.1, target: 6.5, progress: 68, status: "Cần cải thiện" },
+                    { name: "Vật lý", icon: "fa-flask", color: "#f97316", score: 7.5, target: 7.5, progress: 80, status: "Thế mạnh" },
+                    { name: "Hóa học", icon: "fa-dna", color: "#8b5cf6", score: 6.5, target: 6.5, progress: 70, status: "Đạt yêu cầu" },
+                    { name: "Thực hành CNC", icon: "fa-leaf", color: "#14b8a6", score: 8.8, target: 8.5, progress: 92, status: "Thế mạnh" },
+                    { name: "Tiếng Anh", icon: "fa-globe", color: "#ec4899", score: 5.2, target: 5.5, progress: 55, status: "Cần cải thiện" }
+                ],
+                gaps: [
+                    {
+                        finding: "Muốn đi làm ngay sau tốt nghiệp nhưng cần đảm bảo hoàn thành đủ điều kiện công nhận tốt nghiệp văn hóa.",
+                        category: "Cần củng cố năng lực",
+                        interpretation: "Không chủ quan các môn văn hóa Ngữ văn (6.1) và Tiếng Anh (5.2).",
+                        action: "Duy trì lịch ôn văn hóa đều đặn 4 buổi/tuần song song kỳ thực tập doanh nghiệp."
+                    }
+                ],
+                tasks: [
+                    { id: 601, title: "Chuẩn bị hồ sơ thực tập tốt nghiệp tại doanh nghiệp cơ khí Trảng Bom", due: "21/11/2026", tag: "Sự kiện", done: true, supporter: "Khoa Cơ khí & Quan hệ DN", criteria: "Hoàn thành nhật ký thực tập tuần 1" }
+                ],
+                teacherDecision: "Tiếp tục mục tiêu & theo dõi thẻ hành động",
+                teacherReview: "Học sinh có định hướng nghề thực tế, tay nghề vững. Cần giữ vững điểm văn hóa để đảm bảo điều kiện tốt nghiệp."
+            }
+        ];
+
+        // 2. QUẢN LÝ STATE TOÀN CỤC
+        let studentsData = [];
+        let currentStudentId = "HS-01";
+        let currentRole = "student"; // 'student' | 'teacher'
+
+        function initApp() {
+            const saved = localStorage.getItem("EDUPATH_9PLUS_DATA_V1");
+            if (saved) {
+                try {
+                    studentsData = JSON.parse(saved);
+                } catch (e) {
+                    studentsData = JSON.parse(JSON.stringify(DEFAULT_STUDENTS));
+                }
+            } else {
+                studentsData = JSON.parse(JSON.stringify(DEFAULT_STUDENTS));
+            }
+            renderGlobalStudentSelect();
+            renderAllViews();
+        }
+
+        function saveToStorage() {
+            localStorage.setItem("EDUPATH_9PLUS_DATA_V1", JSON.stringify(studentsData));
+        }
+
+        function getCurrentStudent() {
+            return studentsData.find(s => s.id === currentStudentId) || studentsData[0];
+        }
+
+        // 3. RENDER DROPDOWN CHỌN HỌC SINH TRÊN SIDEBAR & HEADER
+        function renderGlobalStudentSelect() {
+            const select = document.getElementById("globalStudentSelect");
+            select.innerHTML = studentsData.map(s => 
+                `<option value="${s.id}" ${s.id === currentStudentId ? 'selected' : ''}>${s.id} – ${s.goal1.substring(0, 24)}...</option>`
+            ).join("");
+
+            const st = getCurrentStudent();
+            document.getElementById("headerAvatar").textContent = st.id.replace("HS-0", "HS");
+            document.getElementById("headerStudentName").textContent = `Mã ${st.id} (Giả định)`;
+            document.getElementById("headerStudentClass").textContent = st.stream;
+            document.getElementById("bannerBadgeText").textContent = `Đang thao tác hồ sơ: Mã ${st.id} • ${st.stream}`;
+        }
+
+        function handleStudentChange(studentId) {
+            currentStudentId = studentId;
+            renderGlobalStudentSelect();
+            renderAllViews();
+            showToast(`Đã chuyển sang dữ liệu hồ sơ giả định ${studentId}`);
+        }
+
+        // 4. RENDER TẤT CẢ CÁC MÀN HÌNH
+        function renderAllViews() {
+            const st = getCurrentStudent();
+            renderDashboard(st);
+            renderProfileTab(st);
+            renderDecisionMapTab(st);
+            renderActionCardsTab(st);
+            renderCasesTab();
+        }
+
+        // 5. RENDER TAB 1: TRANG CHỦ (GIỐNG ẢNH MẪU 123.JPG)
+        function renderDashboard(st) {
+            document.getElementById("kpiCourseCount").textContent = st.kpiCourses;
+            document.getElementById("kpiAvgProgress").textContent = st.kpiAvgProgress;
+            document.getElementById("kpiDaysLeft").textContent = st.kpiDaysLeft;
+            document.getElementById("kpiHighlightCount").textContent = st.kpiHighlights;
+            document.getElementById("radarInsightText").innerHTML = st.radarNote;
+
+            // Vẽ biểu đồ Radar SVG giống hệt ảnh mẫu
+            renderRadarChartSVG(st.radar);
+
+            // Render 6 thanh tiến độ môn học (Toán, Văn, Lý, Hóa, Sinh/Nghề, Anh)
+            const subjectListEl = document.getElementById("subjectProgressList");
+            subjectListEl.innerHTML = st.subjects.map((sub, idx) => {
+                const badgeClass = sub.status === "Thế mạnh" 
+                    ? "bg-emerald-50 text-emerald-600 border-emerald-200"
+                    : sub.status === "Đạt yêu cầu"
+                    ? "bg-blue-50 text-blue-600 border-blue-200"
+                    : "bg-rose-50 text-rose-500 border-rose-100";
+                return `
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style="background-color: ${sub.color}15; color: ${sub.color}">
+                            <i class="fas ${sub.icon} text-xs"></i>
+                        </div>
+                        <div class="w-24 shrink-0">
+                            <div class="text-xs font-semibold text-slate-700 truncate">${sub.name}</div>
+                            <div class="text-[10px] text-slate-400">Điểm: <b>${sub.score}</b>/${sub.target}</div>
+                        </div>
+                        <div class="flex-1 bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                            <div class="h-full rounded-full progress-bar-animate" style="width: ${sub.progress}%; background-color: ${sub.color}"></div>
+                        </div>
+                        <div class="w-9 text-right text-xs font-bold text-slate-700">${sub.progress}%</div>
+                        <span onclick="switchTab('decision-map')" class="cursor-pointer px-2.5 py-1 text-[11px] font-semibold rounded-lg border ${badgeClass} shrink-0">
+                            ${sub.status}
+                        </span>
+                    </div>
+                `;
+            }).join("");
+
+            // Render danh sách Nhiệm vụ trên Dashboard
+            const taskEl = document.getElementById("dashboardTaskList");
+            taskEl.innerHTML = st.tasks.map(t => {
+                const tagColors = {
+                    "Quan trọng": "bg-rose-50 text-rose-600",
+                    "Học tập": "bg-blue-50 text-blue-600",
+                    "Hoàn thành": "bg-emerald-50 text-emerald-600",
+                    "Cá nhân": "bg-indigo-50 text-indigo-600",
+                    "Sự kiện": "bg-sky-50 text-sky-600",
+                    "Xác minh": "bg-amber-50 text-amber-700"
+                };
+                const displayTag = t.done ? "Hoàn thành" : t.tag;
+                const badgeStyle = tagColors[displayTag] || "bg-slate-100 text-slate-600";
+                return `
+                    <div class="py-3 flex items-center justify-between gap-3 group hover:bg-slate-50/80 px-2 rounded-xl transition-colors">
+                        <label class="flex items-center space-x-3 cursor-pointer flex-1 min-w-0">
+                            <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTaskDone(${t.id})" 
+                                class="w-4 h-4 rounded text-blue-600 border-slate-300 focus:ring-blue-500 cursor-pointer">
+                            <span class="text-xs md:text-sm font-medium ${t.done ? 'line-through text-slate-400' : 'text-slate-700'} truncate">
+                                ${t.title}
+                            </span>
+                        </label>
+                        <div class="flex items-center space-x-3 shrink-0">
+                            <span class="text-xs text-slate-400 hidden sm:inline-flex items-center gap-1.5">
+                                <i class="far fa-calendar"></i> ${t.due}
+                            </span>
+                            <span class="px-3 py-1 rounded-full text-[11px] font-semibold ${badgeStyle} min-w-[82px] text-center">
+                                ${displayTag}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        // VẼ BIỂU ĐỒ RADAR SVG TƯƠNG TÁC (6 trục giống hệt ảnh 123.jpg)
+        function renderRadarChartSVG(radar) {
+            const container = document.getElementById("radarChartContainer");
+            const cx = 155, cy = 150, maxR = 92;
+            const axes = [
+                { label: "Tư duy logic", val: radar.logic, angle: -90 },
+                { label: "Sáng tạo", val: radar.creativity, angle: -30 },
+                { label: "Giao tiếp", val: radar.communication, angle: 30 },
+                { label: "Làm việc nhóm", val: radar.teamwork, angle: 90 },
+                { label: "Quản lý thời gian", val: radar.timeMgmt, angle: 150 },
+                { label: "Kiến thức/Nghề", val: radar.expertise, angle: 210 }
+            ];
+            const benchmark = [7.0, 6.5, 7.0, 7.0, 6.8, 7.0]; // Trung bình nhóm
+
+            const degToRad = deg => (deg * Math.PI) / 180;
+            const getPoint = (val, angleDeg) => {
+                const r = (val / 10) * maxR;
+                const rad = degToRad(angleDeg);
+                return `${(cx + r * Math.cos(rad)).toFixed(1)},${(cy + r * Math.sin(rad)).toFixed(1)}`;
+            };
+
+            // Lưới lục giác (Mức 2, 4, 6, 8, 10)
+            let gridPolygons = "";
+            [2, 4, 6, 8, 10].forEach(level => {
+                const pts = axes.map(a => getPoint(level, a.angle)).join(" ");
+                gridPolygons += `<polygon points="${pts}" fill="none" stroke="#e2e8f0" stroke-width="1"/>`;
+            });
+
+            // Trục nối từ tâm
+            const axisLines = axes.map(a => {
+                const [x, y] = getPoint(10, a.angle).split(",");
+                return `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#e2e8f0" stroke-width="1"/>`;
+            }).join("");
+
+            // Đa giác trung bình nhóm
+            const benchPoints = axes.map((a, i) => getPoint(benchmark[i], a.angle)).join(" ");
+            // Đa giác chỉ số của học sinh
+            const studentPoints = axes.map(a => getPoint(a.val, a.angle)).join(" ");
+
+            // Các chấm tròn và nhãn bên ngoài
+            const dotsAndLabels = axes.map(a => {
+                const [px, py] = getPoint(a.val, a.angle).split(",");
+                const [lx, ly] = getPoint(12.6, a.angle).split(",");
+                return `
+                    <circle cx="${px}" cy="${py}" r="4" fill="#2563eb" stroke="white" stroke-width="1.5"/>
+                    <text x="${lx}" y="${parseFloat(ly) - 4}" text-anchor="middle" fill="#475569" font-size="10" font-weight="600">${a.label}</text>
+                    <text x="${lx}" y="${parseFloat(ly) + 9}" text-anchor="middle" fill="#0f172a" font-size="11" font-weight="800">${a.val.toFixed(1)}</text>
+                `;
+            }).join("");
+
+            container.innerHTML = `
+                <svg viewBox="0 0 310 300" class="w-full h-full overflow-visible">
+                    ${gridPolygons}
+                    ${axisLines}
+                    <polygon points="${benchPoints}" fill="rgba(147, 197, 253, 0.25)" stroke="#93c5fd" stroke-width="1.5" stroke-dasharray="3,3"/>
+                    <polygon points="${studentPoints}" fill="rgba(37, 99, 235, 0.22)" stroke="#2563eb" stroke-width="2.2"/>
+                    ${dotsAndLabels}
+                </svg>
+            `;
+        }
+
+        // 6. RENDER TAB 2: HỢP PHẦN A - HỒ SƠ & PHIẾU CHÂN DUNG MỤC TIÊU
+        function renderProfileTab(st) {
+            document.getElementById("inputName").value = st.name;
+            document.getElementById("inputStream").value = st.stream;
+            document.getElementById("inputGoal1").value = st.goal1;
+            document.getElementById("inputGoal2").value = st.goal2;
+            document.getElementById("inputReason").value = st.reason;
+            document.getElementById("inputVerifyStatus").value = st.verifyStatus;
+            document.getElementById("portraitCodeBadge").textContent = st.id;
+
+            const scoreInputsEl = document.getElementById("profileScoreInputs");
+            scoreInputsEl.innerHTML = st.subjects.map((sub, i) => `
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80">
+                    <label class="text-[11px] font-bold text-slate-600 block mb-1">${sub.name}</label>
+                    <div class="flex items-center space-x-1.5">
+                        <input type="number" step="0.1" min="0" max="10" id="subScore_${i}" value="${sub.score}" 
+                            class="w-full px-2 py-1 text-xs font-bold bg-white border rounded-lg text-slate-800" title="Điểm hiện tại">
+                        <span class="text-xs text-slate-400">/</span>
+                        <input type="number" step="0.1" min="0" max="10" id="subTarget_${i}" value="${sub.target}" 
+                            class="w-full px-2 py-1 text-xs bg-white border rounded-lg text-blue-700 font-semibold" title="Điểm mục tiêu">
+                    </div>
+                </div>
+            `).join("");
+
+            // Render Phiếu chân dung mục tiêu bên phải
+            const strongSubjects = st.subjects.filter(s => s.score >= 7.0).map(s => `${s.name} (${s.score})`).join(", ") || "Đang rà soát";
+            const needImprove = st.subjects.filter(s => s.score < s.target).map(s => `${s.name} (${s.score}/${s.target})`).join(", ") || "Đã đạt mục tiêu";
+
+            document.getElementById("portraitContent").innerHTML = `
+                <div class="p-3 rounded-xl bg-white border border-slate-200/70 space-y-1">
+                    <div class="text-[11px] text-slate-400 font-semibold uppercase">1. Điểm đến & Lộ trình đang học</div>
+                    <div class="font-bold text-slate-800">${st.goal1}</div>
+                    <div class="text-xs text-slate-500">Dự phòng: ${st.goal2} • (${st.stream})</div>
+                </div>
+                <div class="p-3 rounded-xl bg-white border border-slate-200/70 space-y-1">
+                    <div class="text-[11px] text-slate-400 font-semibold uppercase">2. Tín hiệu ủng hộ lựa chọn (Môn khá/mạnh)</div>
+                    <div class="font-semibold text-emerald-700">${strongSubjects}</div>
+                    <div class="text-xs text-slate-600">${st.reason}</div>
+                </div>
+                <div class="p-3 rounded-xl bg-white border border-slate-200/70 space-y-1">
+                    <div class="text-[11px] text-slate-400 font-semibold uppercase">3. Khoảng cách điểm số cần củng cố</div>
+                    <div class="font-semibold text-amber-700">${needImprove}</div>
+                </div>
+                <div class="p-3 rounded-xl bg-white border border-slate-200/70 space-y-1">
+                    <div class="text-[11px] text-slate-400 font-semibold uppercase">4. Trạng thái xác minh điều kiện dự thi / hồ sơ</div>
+                    <div class="font-bold ${st.verifyStatus.includes('Đã xác minh') ? 'text-emerald-600' : 'text-rose-600'}">
+                        ${st.verifyStatus}
+                    </div>
+                </div>
+            `;
+        }
+
+        function saveProfileChanges() {
+            const st = getCurrentStudent();
+            st.name = document.getElementById("inputName").value.trim() || st.name;
+            st.stream = document.getElementById("inputStream").value.trim() || st.stream;
+            st.goal1 = document.getElementById("inputGoal1").value.trim() || st.goal1;
+            st.goal2 = document.getElementById("inputGoal2").value.trim() || st.goal2;
+            st.reason = document.getElementById("inputReason").value.trim() || st.reason;
+            st.verifyStatus = document.getElementById("inputVerifyStatus").value;
+
+            st.subjects.forEach((sub, i) => {
+                const sc = parseFloat(document.getElementById(`subScore_${i}`).value) || sub.score;
+                const tg = parseFloat(document.getElementById(`subTarget_${i}`).value) || sub.target;
+                sub.score = sc;
+                sub.target = tg;
+                sub.progress = Math.min(100, Math.round((sc / tg) * 80));
+                sub.status = sc >= 7.8 ? "Thế mạnh" : (sc >= tg ? "Đạt yêu cầu" : "Cần cải thiện");
+            });
+
+            saveToStorage();
+            renderGlobalStudentSelect();
+            renderAllViews();
+            showToast("Đã lưu cập nhật Hồ sơ & tự động đồng bộ sang Bản đồ quyết định 9+!");
+        }
+
+        // 7. RENDER TAB 3: HỢP PHẦN B - BẢN ĐỒ QUYẾT ĐỊNH 9+
+        function renderDecisionMapTab(st) {
+            // Render 4 câu hỏi hạt nhân của Bản đồ quyết định 9+ (Mục 2.1)
+            const qGrid = document.getElementById("fourCoreQuestionsGrid");
+            const strongSub = st.subjects.filter(s => s.score >= 7.0).map(s => `${s.name} (${s.score})`).join(", ");
+            const weakSub = st.subjects.filter(s => s.score < s.target).map(s => `${s.name} (${s.score})`).join(", ");
+
+            qGrid.innerHTML = `
+                <div class="p-4 rounded-xl bg-blue-50/70 border border-blue-200/70 space-y-1">
+                    <span class="text-[11px] font-extrabold text-blue-700 uppercase">Câu hỏi (1): Hướng tới lựa chọn nào?</span>
+                    <p class="text-xs font-bold text-slate-800">${st.goal1}</p>
+                    <p class="text-[11px] text-slate-500">Dự phòng: ${st.goal2}</p>
+                </div>
+                <div class="p-4 rounded-xl bg-amber-50/70 border border-amber-200/70 space-y-1">
+                    <span class="text-[11px] font-extrabold text-amber-800 uppercase">Câu hỏi (2): Dữ liệu ủng hộ / cản trở?</span>
+                    <p class="text-xs text-slate-700"><b>Ủng hộ:</b> ${strongSub || 'Thực hành nghề'}</p>
+                    <p class="text-xs text-rose-700"><b>Cản trở:</b> ${weakSub || 'Không có môn yếu'}</p>
+                </div>
+                <div class="p-4 rounded-xl bg-rose-50/70 border border-rose-200/70 space-y-1">
+                    <span class="text-[11px] font-extrabold text-rose-700 uppercase">Câu hỏi (3): Điều kiện cần xác minh?</span>
+                    <p class="text-xs font-bold text-slate-800">${st.verifyStatus}</p>
+                    <p class="text-[11px] text-slate-500">Đối chiếu TT 24/2024 & TT 13/2026 tại Phòng Đào tạo</p>
+                </div>
+                <div class="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200/70 space-y-1">
+                    <span class="text-[11px] font-extrabold text-emerald-800 uppercase">Câu hỏi (4): Việc cần làm 2–4 tuần tới?</span>
+                    <p class="text-xs font-bold text-slate-800">${st.tasks.filter(t=>!t.done).length} nhiệm vụ ưu tiên đang mở</p>
+                    <p class="text-[11px] text-slate-500">Quyết định GV: ${st.teacherDecision}</p>
+                </div>
+            `;
+
+            // Render Bảng đối chiếu 3 chiều
+            const tbody = document.getElementById("decisionMapTableBody");
+            tbody.innerHTML = st.gaps.map((g, index) => {
+                let badgeClass = "bg-blue-100 text-blue-800 border-blue-200";
+                if (g.category.includes("củng cố")) badgeClass = "bg-amber-100 text-amber-800 border-amber-200";
+                if (g.category.includes("xác minh")) badgeClass = "bg-rose-100 text-rose-800 border-rose-200";
+
+                return `
+                    <tr class="hover:bg-slate-50/80 transition-colors">
+                        <td class="py-3.5 px-4 font-semibold text-slate-800">${g.finding}</td>
+                        <td class="py-3.5 px-4">
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold border ${badgeClass} inline-block">
+                                ${g.category}
+                            </span>
+                        </td>
+                        <td class="py-3.5 px-4 text-slate-600">${g.interpretation}</td>
+                        <td class="py-3.5 px-4 font-medium text-blue-800">${g.action}</td>
+                        <td class="py-3.5 px-3 text-center">
+                            <button onclick="deleteGapRow(${index})" class="text-slate-400 hover:text-rose-600 p-1" title="Xóa dòng">
+                                <i class="far fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join("");
+        }
+
+        function openAddGapModal() {
+            document.getElementById("addGapModal").classList.remove("hidden");
+        }
+
+        function submitNewGap() {
+            const finding = document.getElementById("newGapFinding").value.trim();
+            const category = document.getElementById("newGapCategory").value;
+            const interpretation = document.getElementById("newGapInterpretation").value.trim();
+            const action = document.getElementById("newGapAction").value.trim();
+
+            if (!finding || !action) {
+                showToast("Vui lòng nhập Phát hiện từ hồ sơ và Thẻ hành động đề xuất!");
+                return;
+            }
+            const st = getCurrentStudent();
+            st.gaps.push({
+                finding,
+                category,
+                interpretation: interpretation || "Phân loại theo quy trình chuẩn EDUPATH 9+, không kết luận thay đơn vị.",
+                action
+            });
+            saveToStorage();
+            renderDecisionMapTab(st);
+            closeModal("addGapModal");
+            showToast("Đã bổ sung dòng đối chiếu vào Bản đồ quyết định 9+!");
+        }
+
+        function deleteGapRow(idx) {
+            const st = getCurrentStudent();
+            st.gaps.splice(idx, 1);
+            saveToStorage();
+            renderDecisionMapTab(st);
+            showToast("Đã xóa dòng đối chiếu.");
+        }
+
+        // 8. RENDER TAB 4: HỢP PHẦN C - THẺ HÀNH ĐỘNG 2-4 TUẦN & BƯỚC 5 ĐÁNH GIÁ LẠI
+        function renderActionCardsTab(st) {
+            const grid = document.getElementById("actionCardsGrid");
+            grid.innerHTML = st.tasks.map(t => `
+                <div class="bg-white rounded-2xl p-5 card-shadow border ${t.done ? 'border-emerald-200 bg-emerald-50/20' : 'border-slate-100'} flex flex-col justify-between space-y-3">
+                    <div class="flex items-start justify-between gap-3">
+                        <label class="flex items-start space-x-3 cursor-pointer">
+                            <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTaskDone(${t.id})" 
+                                class="mt-1 w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer">
+                            <div>
+                                <span class="text-xs md:text-sm font-bold ${t.done ? 'line-through text-slate-400' : 'text-slate-800'}">
+                                    ${t.title}
+                                </span>
+                                <div class="text-xs text-slate-500 mt-1">
+                                    <i class="fas fa-bullseye text-blue-500 mr-1"></i><b>Tiêu chí/Minh chứng:</b> ${t.criteria || 'Hoàn thành đúng hạn & có xác nhận'}
+                                </div>
+                            </div>
+                        </label>
+                        <span class="px-2.5 py-1 rounded-full text-[11px] font-bold ${t.done ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'} shrink-0">
+                            ${t.done ? 'Đã hoàn thành' : t.tag}
+                        </span>
+                    </div>
+                    <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                        <span><i class="fas fa-user-shield text-indigo-500 mr-1"></i>Hỗ trợ: <b>${t.supporter || 'GV tư vấn'}</b></span>
+                        <span><i class="far fa-clock text-amber-500 mr-1"></i>Hạn: <b>${t.due}</b></span>
+                    </div>
+                </div>
+            `).join("");
+
+            // Bước 5: Phiếu kết quả 3 phần cuối chu kỳ
+            const doneCount = st.tasks.filter(t => t.done).length;
+            document.getElementById("evalPart1").textContent = `Mục tiêu "${st.goal1}" còn phù hợp để tiếp tục tìm hiểu (Đã đối chiếu với thế mạnh thực hành).`;
+            document.getElementById("evalPart2").textContent = `Đã hoàn thành ${doneCount}/${st.tasks.length} thẻ hành động trong chu kỳ 2–4 tuần.`;
+            document.getElementById("evalPart3").textContent = `Trạng thái hồ sơ: ${st.verifyStatus}.`;
+
+            document.getElementById("teacherDecisionSelect").value = st.teacherDecision;
+            document.getElementById("teacherReviewInput").value = st.teacherReview;
+        }
+
+        function toggleTaskDone(taskId) {
+            const st = getCurrentStudent();
+            const task = st.tasks.find(t => t.id === taskId);
+            if (task) {
+                task.done = !task.done;
+                saveToStorage();
+                renderAllViews();
+                showToast(task.done ? "Đã đánh dấu hoàn thành nhiệm vụ!" : "Đã mở lại nhiệm vụ.");
+            }
+        }
+
+        function openAddTaskModal() {
+            document.getElementById("addTaskModal").classList.remove("hidden");
+        }
+
+        function submitNewTask() {
+            const title = document.getElementById("newTaskTitle").value.trim();
+            const due = document.getElementById("newTaskDue").value.trim() || "Trong 2 tuần";
+            const tag = document.getElementById("newTaskTag").value;
+            const supporter = document.getElementById("newTaskSupporter").value.trim() || "Giáo viên bộ môn";
+            const criteria = document.getElementById("newTaskCriteria").value.trim() || "Có xác nhận hoàn thành";
+
+            if (!title) {
+                showToast("Vui lòng nhập tên nhiệm vụ cho Thẻ hành động!");
+                return;
+            }
+            const st = getCurrentStudent();
+            st.tasks.unshift({
+                id: Date.now(),
+                title,
+                due,
+                tag,
+                done: false,
+                supporter,
+                criteria
+            });
+            saveToStorage();
+            renderAllViews();
+            closeModal("addTaskModal");
+            showToast("Đã thêm Thẻ hành động 2–4 tuần mới!");
+        }
+
+        function saveTeacherReview() {
+            const st = getCurrentStudent();
+            st.teacherDecision = document.getElementById("teacherDecisionSelect").value;
+            st.teacherReview = document.getElementById("teacherReviewInput").value.trim();
+            saveToStorage();
+            renderAllViews();
+            showToast("Đã lưu xác nhận và nhận xét của Giáo viên tư vấn!");
+        }
+
+        // 9. RENDER TAB 5: BỘ CA KIỂM THỬ GIẢ ĐỊNH (06 CA HS-01 ĐẾN HS-06)
+        function renderCasesTab() {
+            const grid = document.getElementById("simulatedCasesGrid");
+            grid.innerHTML = studentsData.map(s => {
+                const isSelected = s.id === currentStudentId;
+                return `
+                    <div class="bg-white rounded-2xl p-5 card-shadow border-2 ${isSelected ? 'border-blue-600 ring-2 ring-blue-100' : 'border-slate-100'} flex flex-col justify-between space-y-4">
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="px-2.5 py-1 rounded-lg text-xs font-extrabold ${isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-700'}">
+                                    Mã ${s.id}
+                                </span>
+                                <span class="text-[11px] font-semibold ${s.verifyStatus.includes('Đã xác minh') ? 'text-emerald-600' : 'text-amber-600'}">
+                                    ${s.verifyStatus}
+                                </span>
+                            </div>
+                            <h3 class="text-sm font-bold text-slate-800">${s.name}</h3>
+                            <p class="text-xs text-blue-700 font-semibold">${s.goal1}</p>
+                            <p class="text-xs text-slate-500 line-clamp-2">${s.reason}</p>
+                        </div>
+
+                        <div class="space-y-2 pt-2 border-t border-slate-100">
+                            <div class="flex flex-wrap gap-1.5 text-[11px]">
+                                ${s.subjects.slice(0, 4).map(sub => `
+                                    <span class="px-2 py-0.5 bg-slate-100 rounded text-slate-700">${sub.name}: <b>${sub.score}</b></span>
+                                `).join("")}
+                            </div>
+                            <div class="flex items-center justify-between pt-2">
+                                <span class="text-[11px] text-slate-400">${s.gaps.length} đối chiếu • ${s.tasks.length} thẻ hành động</span>
+                                <button onclick="selectCaseAndOpenMap('${s.id}')" class="px-3 py-1.5 rounded-xl text-xs font-semibold ${isSelected ? 'bg-emerald-600 text-white' : 'bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white'} transition-colors">
+                                    ${isSelected ? 'Đang chọn' : 'Nạp ca này'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        function selectCaseAndOpenMap(id) {
+            currentStudentId = id;
+            renderGlobalStudentSelect();
+            renderAllViews();
+            switchTab('dashboard');
+            showToast(`Đã nạp ca giả định ${id} lên Trang chủ & Bản đồ quyết định!`);
+        }
+
+        function openNewStudentModal() {
+            document.getElementById("newStudentModal").classList.remove("hidden");
+        }
+
+        function submitNewStudentCase() {
+            const code = document.getElementById("createStudentCode").value.trim() || `HS-0${studentsData.length + 1}`;
+            const stream = document.getElementById("createStudentStream").value.trim();
+            const goal = document.getElementById("createStudentGoal").value.trim() || "Nhóm ngành Kỹ thuật - Công nghệ";
+            const math = parseFloat(document.getElementById("createScoreMath").value) || 6.0;
+            const lit = parseFloat(document.getElementById("createScoreLit").value) || 6.5;
+            const phy = parseFloat(document.getElementById("createScorePhy").value) || 7.5;
+
+            const newCase = JSON.parse(JSON.stringify(DEFAULT_STUDENTS[0]));
+            newCase.id = code;
+            newCase.name = `Học sinh mã ${code} (Ca bổ sung)`;
+            newCase.stream = stream;
+            newCase.goal1 = goal;
+            newCase.subjects[0].score = math;
+            newCase.subjects[1].score = lit;
+            newCase.subjects[2].score = phy;
+
+            studentsData.push(newCase);
+            currentStudentId = code;
+            saveToStorage();
+            renderGlobalStudentSelect();
+            renderAllViews();
+            closeModal("newStudentModal");
+            showToast(`Đã tạo mới và chọn ca giả định ${code}!`);
+        }
+
+        // =========================================================================
+        // 10. HỆ THỐNG XUẤT FILE .CSV CHUẨN UTF-8 WITH BOM (MỞ EXCEL KHÔNG LỖI FONT)
+        // =========================================================================
+        function escapeCSV(val) {
+            if (val === null || val === undefined) return '""';
+            const str = String(val).replace(/"/g, '""');
+            return `"${str}"`;
+        }
+
+        function downloadCSVFile(filename, rowsArray) {
+            // Thêm BOM \uFEFF để Microsoft Excel nhận diện đúng Tiếng Việt UTF-8
+            const csvContent = "\uFEFF" + rowsArray.map(r => r.map(escapeCSV).join(",")).join("\r\n");
+            const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            document.getElementById("csvDropdown").classList.add("hidden");
+        }
+
+        // XUẤT 1: Hồ sơ & Bản đồ quyết định 9+ của học sinh hiện tại (Đầy đủ Hợp phần A, B, C)
+        function exportCurrentStudentCSV() {
+            const st = getCurrentStudent();
+            const rows = [
+                ["BÁO CÁO HỒ SƠ & BẢN ĐỒ QUYẾT ĐỊNH 9+ (MÔ HÌNH EDUPATH 9+)"],
+                ["Đơn vị", "Trường Cao đẳng Công nghệ TP.HCM - Phân hiệu tại Đồng Nai"],
+                ["Ngày xuất báo cáo", new Date().toLocaleDateString("vi-VN")],
+                [],
+                ["I. HỢP PHẦN A: HỒ SƠ & CHÂN DUNG MỤC TIÊU"],
+                ["Mã học sinh (Giả định)", st.id],
+                ["Họ tên mô phỏng", st.name],
+                ["Khối lớp & Lộ trình", st.stream],
+                ["Mục tiêu ưu tiên 1", st.goal1],
+                ["Lựa chọn dự phòng 2", st.goal2],
+                ["Lý do & Sở thích", st.reason],
+                ["Trạng thái xác minh điều kiện", st.verifyStatus],
+                [],
+                ["BẢNG ĐIỂM HỌC TẬP & KHOẢNG CÁCH NĂNG LỰC"],
+                ["Môn học", "Điểm hiện tại", "Điểm mục tiêu", "Tiến độ (%)", "Nhãn đánh giá"],
+                ...st.subjects.map(s => [s.name, s.score, s.target, s.progress + "%", s.status]),
+                [],
+                ["II. HỢP PHẦN B: BẢN ĐỒ KHOẢNG CÁCH & ĐIỀU KIỆN (ĐỐI CHIẾU 3 CHIỀU)"],
+                ["STT", "Phát hiện từ hồ sơ", "Nhãn phân nhóm khoảng cách", "Cách EDUPATH 9+ diễn giải", "Thẻ hành động đề xuất"],
+                ...st.gaps.map((g, i) => [i + 1, g.finding, g.category, g.interpretation, g.action]),
+                [],
+                ["III. HỢP PHẦN C: THẺ HÀNH ĐỘNG 2-4 TUẦN & XÁC NHẬN CỦA GIÁO VIÊN"],
+                ["Mã việc", "Nhiệm vụ cụ thể", "Tiêu chí hoàn thành / Minh chứng", "Người hỗ trợ", "Hạn chót", "Phân loại", "Trạng thái"],
+                ...st.tasks.map(t => [t.id, t.title, t.criteria, t.supporter, t.due, t.tag, t.done ? "Đã hoàn thành" : "Đang thực hiện"]),
+                [],
+                ["KẾT LUẬN & XÁC NHẬN CỦA GIÁO VIÊN TƯ VẤN (BƯỚC 5)"],
+                ["Quyết định tư vấn", st.teacherDecision],
+                ["Nhận xét của Giáo viên", st.teacherReview]
+            ];
+
+            downloadCSVFile(`EDUPATH9+_BanDoQuyetDinh_${st.id}.csv`, rows);
+            showToast(`Đã xuất file EDUPATH9+_BanDoQuyetDinh_${st.id}.csv thành công!`);
+        }
+
+        // XUẤT 2: Toàn bộ Bộ ca kiểm thử giả định (HS-01 đến HS-06)
+        function exportAllCasesCSV() {
+            const rows = [
+                ["DANH SÁCH BỘ CA KIỂM THỬ GIẢ ĐỊNH - DỰ ÁN EDUPATH 9+ (PHÂN HIỆU ĐỒNG NAI)"],
+                ["Mã HS", "Tên mô phỏng", "Lộ trình 9+", "Mục tiêu ưu tiên 1", "Mục tiêu 2", "Điểm Toán", "Điểm Văn", "Điểm Lý", "Điểm Hóa", "Điểm Nghề/Sinh", "Điểm Anh", "Trạng thái xác minh hồ sơ", "Số nhiệm vụ 2-4 tuần", "Quyết định của Giáo viên", "Nhận xét của Giáo viên"]
+            ];
+
+            studentsData.forEach(s => {
+                const sc = s.subjects.map(sub => sub.score);
+                rows.push([
+                    s.id,
+                    s.name,
+                    s.stream,
+                    s.goal1,
+                    s.goal2,
+                    sc[0] || "",
+                    sc[1] || "",
+                    sc[2] || "",
+                    sc[3] || "",
+                    sc[4] || "",
+                    sc[5] || "",
+                    s.verifyStatus,
+                    s.tasks.length,
+                    s.teacherDecision,
+                    s.teacherReview
+                ]);
+            });
+
+            downloadCSVFile("EDUPATH9+_BoCaKiemThuGiaDinh_Full.csv", rows);
+            showToast("Đã xuất toàn bộ Bộ ca kiểm thử giả định ra file .CSV!");
+        }
+
+        // XUẤT 3: Danh sách Thẻ hành động 2-4 tuần của toàn bộ học sinh
+        function exportActionCardsCSV() {
+            const rows = [
+                ["BẢNG TỔNG HỢP THẺ HÀNH ĐỘNG NGẮN HẠN (2-4 TUẦN) - EDUPATH 9+"],
+                ["Mã HS", "Mục tiêu học tập", "Tên nhiệm vụ cụ thể", "Tiêu chí hoàn thành / Minh chứng", "Người hỗ trợ", "Thời hạn kiểm tra", "Nhãn ưu tiên", "Trạng thái hoàn thành", "Quyết định của GV"]
+            ];
+
+            studentsData.forEach(s => {
+                s.tasks.forEach(t => {
+                    rows.push([
+                        s.id,
+                        s.goal1,
+                        t.title,
+                        t.criteria,
+                        t.supporter,
+                        t.due,
+                        t.tag,
+                        t.done ? "Hoàn thành" : "Chưa hoàn thành",
+                        s.teacherDecision
+                    ]);
+                });
+            });
+
+            downloadCSVFile("EDUPATH9+_TheHanhDong_2_4_Tuan.csv", rows);
+            showToast("Đã xuất Danh sách Thẻ hành động 2–4 tuần (.CSV)!");
+        }
+
+        // 11. ĐIỀU HƯỚNG TABS & TIỆN ÍCH GIAO DIỆN
+        function switchTab(tabName) {
+            const tabs = ['dashboard', 'profile', 'decision-map', 'action-cards', 'cases', 'consultation'];
+            tabs.forEach(t => {
+                document.getElementById(`tab-${t}`).classList.add('hidden');
+                const navBtn = document.getElementById(`nav-${t}`);
+                if (navBtn) {
+                    navBtn.className = "nav-item w-full flex items-center space-x-3.5 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-[#243b67] hover:text-white transition-all";
+                }
+            });
+
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`nav-${tabName}`);
+            if (activeBtn) {
+                activeBtn.className = "nav-item w-full flex items-center space-x-3.5 px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-[#3b66d6] text-white shadow-md";
+            }
+
+            // Đóng sidebar trên mobile nếu đang mở
+            if (window.innerWidth < 768) {
+                document.getElementById("sidebar").classList.add("-translate-x-full");
+            }
+        }
+
+        function setRole(role) {
+            currentRole = role;
+            const btnSt = document.getElementById("roleBtnStudent");
+            const btnTc = document.getElementById("roleBtnTeacher");
+            if (role === 'student') {
+                btnSt.className = "px-3 py-1 rounded-full text-xs font-semibold transition-all bg-white text-blue-700 shadow-sm";
+                btnTc.className = "px-3 py-1 rounded-full text-xs font-semibold transition-all text-slate-600 hover:text-slate-900";
+                showToast("Đang ở góc nhìn: Học sinh lớp 12 hệ 9+");
+            } else {
+                btnTc.className = "px-3 py-1 rounded-full text-xs font-semibold transition-all bg-white text-blue-700 shadow-sm";
+                btnSt.className = "px-3 py-1 rounded-full text-xs font-semibold transition-all text-slate-600 hover:text-slate-900";
+                switchTab('action-cards');
+                showToast("Đang ở góc nhìn: Giáo viên tư vấn (Rà soát & Xác nhận Thẻ hành động)");
+            }
+        }
+
+        function toggleCsvMenu() {
+            document.getElementById("csvDropdown").classList.toggle("hidden");
+        }
+
+        function toggleMobileSidebar() {
+            document.getElementById("sidebar").classList.toggle("-translate-x-full");
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add("hidden");
+        }
+
+        // Tìm kiếm nhanh trên thanh Header
+        function handleQuickSearch(query) {
+            const dropdown = document.getElementById("searchDropdown");
+            const q = query.trim().toLowerCase();
+            if (!q) {
+                dropdown.classList.add("hidden");
+                return;
+            }
+            const matchedStudents = studentsData.filter(s => 
+                s.id.toLowerCase().includes(q) || 
+                s.name.toLowerCase().includes(q) || 
+                s.goal1.toLowerCase().includes(q) ||
+                s.stream.toLowerCase().includes(q)
+            );
+
+            let html = `<div class="text-[11px] font-bold text-slate-400 uppercase px-2 py-1">Hồ sơ ca giả định phù hợp (${matchedStudents.length})</div>`;
+            if (matchedStudents.length === 0) {
+                html += `<div class="px-3 py-2 text-xs text-slate-500">Không tìm thấy hồ sơ khớp từ khóa "${query}"</div>`;
+            } else {
+                html += matchedStudents.map(s => `
+                    <div onclick="selectCaseAndOpenMap('${s.id}'); document.getElementById('searchDropdown').classList.add('hidden');" 
+                        class="px-3 py-2 rounded-xl hover:bg-blue-50 cursor-pointer flex items-center justify-between">
+                        <div>
+                            <div class="text-xs font-bold text-slate-800">${s.id} - ${s.goal1}</div>
+                            <div class="text-[11px] text-slate-500">${s.stream}</div>
+                        </div>
+                        <span class="text-[10px] px-2 py-0.5 bg-blue-100 text-blue-700 rounded font-semibold">Xem ngay</span>
+                    </div>
+                `).join("");
+            }
+            dropdown.innerHTML = html;
+            dropdown.classList.remove("hidden");
+        }
+
+        // Modal xem thông tin văn bản đối chiếu (Mục 4.6 Thuyết minh)
+        const REGULATIONS_DATA = [
+            {
+                title: "Quy chế thi tốt nghiệp THPT (Thông tư 24/2024/TT-BGDĐT & Thông tư 13/2026/TT-BGDĐT)",
+                body: `
+                    <p><b>Nguồn đối chiếu chính thức:</b> Hệ thống văn bản quy phạm pháp luật Chính phủ (vanban.chinhphu.vn).</p>
+                    <p><b>Nguyên tắc áp dụng trong EDUPATH 9+:</b> Đối với học sinh thuộc mô hình đào tạo sau THCS (hệ 9+), tư cách dự thi, môn thi tự chọn, điểm khuyến khích nghề và điều kiện công nhận tốt nghiệp phải được đối chiếu trực tiếp với hồ sơ đào tạo thực tế tại Phân hiệu Đồng Nai.</p>
+                    <p class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-900"><b>Lưu ý quan trọng:</b> Hệ thống không tự động kết luận đủ/không đủ điều kiện dự thi; mọi trường hợp thiếu thông tin đều được gắn nhãn "Cần xác minh tại đơn vị".</p>
+                `
+            },
+            {
+                title: "Hướng dẫn xác minh hồ sơ & lộ trình học tiếp hệ 9+ tại Phân hiệu Đồng Nai",
+                body: `
+                    <p><b>Đơn vị xác nhận:</b> Bộ phận Đào tạo / Giáo vụ và Giáo viên chủ nhiệm Trường Cao đẳng Công nghệ TP.HCM – Phân hiệu tại Đồng Nai.</p>
+                    <p><b>Quy trình 3 bước dành cho học sinh:</b></p>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>Bước 1: Lập Phiếu chân dung mục tiêu và Bản đồ khoảng cách trên EDUPATH 9+.</li>
+                        <li>Bước 2: Ghi rõ các câu hỏi cần xác minh về hồ sơ, diện dự thi hoặc điều kiện liên thông.</li>
+                        <li>Bước 3: Gặp trực tiếp giáo viên tư vấn hoặc cán bộ phụ trách đào tạo để xác nhận bằng văn bản.</li>
+                    </ul>
+                `
+            },
+            {
+                title: "Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15 & Nghị định 356/2025/NĐ-CP",
+                body: `
+                    <p><b>Cam kết tuân thủ pháp luật của nhóm tác giả:</b></p>
+                    <p>1. Trong toàn bộ quá trình dự thi năm 2026, hệ thống sử dụng <b>bộ ca giả định (HS-01 đến HS-06)</b>, tuyệt đối không đăng tải dữ liệu định danh cá nhân hoặc bảng điểm thật của học sinh chưa thành niên lên nền tảng công cộng khi chưa được phép.</p>
+                    <p>2. Không sử dụng AI để tự động phán xét tâm lý hay quyết định thay giáo viên.</p>
+                `
+            }
+        ];
+
+        function openRegulationModal(idx) {
+            const reg = REGULATIONS_DATA[idx];
+            document.getElementById("regModalTitle").textContent = reg.title;
+            document.getElementById("regModalBody").innerHTML = reg.body;
+            document.getElementById("regulationModal").classList.remove("hidden");
+        }
+
+        function openProjectInfoModal() {
+            switchTab('consultation');
+            document.getElementById("csvDropdown").classList.add("hidden");
+        }
+
+        function showNotificationModal() {
+            openRegulationModal(0);
+        }
+
+        function resetDefaultData() {
+            localStorage.removeItem("EDUPATH_9PLUS_DATA_V1");
+            studentsData = JSON.parse(JSON.stringify(DEFAULT_STUDENTS));
+            currentStudentId = "HS-01";
+            renderGlobalStudentSelect();
+            renderAllViews();
+            document.getElementById("csvDropdown").classList.add("hidden");
+            showToast("Đã khôi phục toàn bộ dữ liệu 06 ca giả định về mặc định!");
+        }
+
+        function showToast(msg) {
+            const box = document.getElementById("toastBox");
+            document.getElementById("toastMessage").textContent = msg;
+            box.classList.remove("hidden");
+            clearTimeout(window._toastTimer);
+            window._toastTimer = setTimeout(() => {
+                box.classList.add("hidden");
+            }, 3400);
+        }
+
+        // Đóng dropdown khi click ra ngoài
+        window.addEventListener("click", function(e) {
+            const csvDrop = document.getElementById("csvDropdown");
+            if (!e.target.closest("#csvDropdown") && !e.target.closest("button[onclick='toggleCsvMenu()']")) {
+                csvDrop.classList.add("hidden");
+            }
+            const searchDrop = document.getElementById("searchDropdown");
+            if (!e.target.closest("#searchDropdown") && !e.target.closest("#globalSearchInput")) {
+                searchDrop.classList.add("hidden");
+            }
+        });
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>
