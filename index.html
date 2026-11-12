@@ -66,6 +66,56 @@
         .animate-pulse-soft {
             animation: pulse-soft 2.5s infinite;
         }
+
+        /* ================= HIỆU ỨNG BIỂU ĐỒ MẠCH PHÂN NHÁNH (CIRCUIT DIAGRAM) ================= */
+        .circuit-board-bg {
+            background-color: #0b1528;
+            background-image: 
+                radial-gradient(rgba(56, 189, 248, 0.14) 1px, transparent 1px),
+                linear-gradient(to right, rgba(30, 58, 138, 0.15) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(30, 58, 138, 0.15) 1px, transparent 1px);
+            background-size: 20px 20px, 40px 40px, 40px 40px;
+        }
+        .circuit-node {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        .circuit-node:hover {
+            transform: translateY(-2px);
+        }
+        .circuit-node-active {
+            border-color: #38bdf8 !important;
+            background: linear-gradient(135deg, rgba(14, 116, 144, 0.45) 0%, rgba(30, 64, 175, 0.55) 100%) !important;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.35), inset 0 0 12px rgba(56, 189, 248, 0.2);
+        }
+        .circuit-wire-v {
+            width: 3px;
+            background: linear-gradient(to bottom, #38bdf8, #6366f1);
+            position: relative;
+            overflow: hidden;
+        }
+        .circuit-wire-v::after {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, #ffffff, transparent);
+            animation: current-flow 1.6s infinite linear;
+        }
+        @keyframes current-flow {
+            0% { top: -100%; }
+            100% { top: 100%; }
+        }
+        @keyframes circuit-flash {
+            0% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.7); }
+            70% { box-shadow: 0 0 0 14px rgba(56, 189, 248, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
+        }
+        .circuit-highlight-ring {
+            animation: circuit-flash 1.8s ease-out 2;
+        }
     </style>
 </head>
 <body class="h-screen flex overflow-hidden select-none md:select-auto">
@@ -219,7 +269,7 @@
                             <i class="fas fa-user-check text-blue-600 mt-0.5 text-sm"></i>
                             <div>
                                 <div class="font-semibold text-slate-800">1. Xuất Hồ sơ & Bản đồ quyết định hiện tại</div>
-                                <div class="text-slate-500 text-[11px]">Gồm đầy đủ Hợp phần A, B, C của học sinh đang chọn</div>
+                                <div class="text-slate-500 text-[11px]">Gồm đầy đủ Hợp phần A, B, C & Mạch giả thuyết</div>
                             </div>
                         </button>
                         <button onclick="exportAllCasesCSV()" class="w-full px-4 py-2.5 text-left text-xs hover:bg-slate-50 flex items-start space-x-3 transition-colors">
@@ -268,7 +318,7 @@
         </header>
 
         <!-- ================= MAIN SCROLLABLE CONTENT ================= -->
-        <main class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-7 space-y-6">
+        <main id="mainScrollArea" class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-7 space-y-6">
 
             <!-- ===================================================================== -->
             <!-- TAB 1: TRANG CHỦ DASHBOARD (BÁM SÁT 100% BỐ CỤC ẢNH MẪU 123.JPG)       -->
@@ -292,8 +342,8 @@
                         </p>
                         <!-- Phím tắt nhanh tới 3 hợp phần cốt lõi -->
                         <div class="pt-2 flex flex-wrap gap-2">
-                            <button onclick="switchTab('decision-map')" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg shadow-sm transition-all flex items-center gap-1.5">
-                                <i class="fas fa-sitemap"></i> Mở Bản đồ quyết định 9+
+                            <button onclick="openDecisionMapAndCircuit()" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg shadow-sm transition-all flex items-center gap-1.5 ring-2 ring-blue-400/40">
+                                <i class="fas fa-microchip"></i> Mở Bản đồ quyết định 9+ (Mạch phân nhánh)
                             </button>
                             <button onclick="switchTab('action-cards')" class="px-3.5 py-1.5 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-lg border border-slate-200/80 shadow-sm transition-all flex items-center gap-1.5">
                                 <i class="fas fa-calendar-check text-blue-600"></i> Lập Thẻ hành động 2-4 tuần
@@ -359,7 +409,7 @@
                     </div>
 
                     <!-- Thẻ 2 -->
-                    <div onclick="switchTab('decision-map')" class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 flex items-center justify-between cursor-pointer hover:border-emerald-300 transition-all group">
+                    <div onclick="openDecisionMapAndCircuit()" class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 flex items-center justify-between cursor-pointer hover:border-emerald-300 transition-all group">
                         <div class="flex items-center space-x-4">
                             <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl group-hover:scale-105 transition-transform">
                                 <i class="fas fa-signal"></i>
@@ -387,7 +437,7 @@
                     </div>
 
                     <!-- Thẻ 4 -->
-                    <div onclick="switchTab('decision-map')" class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 flex items-center justify-between cursor-pointer hover:border-amber-300 transition-all group">
+                    <div onclick="openDecisionMapAndCircuit()" class="bg-white rounded-2xl p-4 md:p-5 card-shadow border border-slate-100 flex items-center justify-between cursor-pointer hover:border-amber-300 transition-all group">
                         <div class="flex items-center space-x-4">
                             <div class="w-12 h-12 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center text-xl group-hover:scale-105 transition-transform">
                                 <i class="far fa-star"></i>
@@ -458,7 +508,7 @@
                                 <i class="fas fa-chart-line text-blue-600 text-lg"></i>
                                 <h2 class="text-base md:text-lg font-bold text-slate-800">Tiến độ học tập & Khoảng cách</h2>
                             </div>
-                            <button onclick="switchTab('decision-map')" class="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1">
+                            <button onclick="openDecisionMapAndCircuit()" class="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1">
                                 <span>Xem tất cả</span>
                                 <i class="fas fa-arrow-right text-[10px]"></i>
                             </button>
@@ -658,11 +708,151 @@
             </section>
 
             <!-- ===================================================================== -->
-            <!-- TAB 3: HỢP PHẦN B - BẢN ĐỒ QUYẾT ĐỊNH 9+ (HẠT NHÂN MÔ HÌNH)            -->
+            <!-- TAB 3: HỢP PHẦN B - BẢN ĐỒ QUYẾT ĐỊNH 9+ & BIỂU ĐỒ MẠCH PHÂN NHÁNH     -->
             <!-- ===================================================================== -->
             <section id="tab-decision-map" class="hidden space-y-6">
                 
-                <!-- Header Bản đồ quyết định -->
+                <!-- =================================================================== -->
+                <!-- KHỐI MỚI TRỌNG TÂM: BIỂU ĐỒ MẠCH PHÂN NHÁNH GIẢ THUYẾT THU HẸP PHẠM VI -->
+                <!-- =================================================================== -->
+                <div id="circuitBranchingContainer" class="circuit-board-bg rounded-2xl p-5 md:p-6 text-white shadow-2xl border border-sky-500/30 relative overflow-hidden">
+                    <!-- Trang trí góc mạch điện tử -->
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-sky-500/20 pb-4">
+                        <div class="space-y-1">
+                            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-sky-500/20 border border-sky-400/40 text-sky-300 text-xs font-bold">
+                                <i class="fas fa-microchip animate-pulse"></i>
+                                <span>BIỂU ĐỒ MẠCH PHÂN NHÁNH 9+ • THU HẸP PHẠM VI QUYẾT ĐỊNH THEO GIẢ THUYẾT</span>
+                            </div>
+                            <h2 class="text-lg md:text-xl font-extrabold text-white tracking-tight">
+                                Mạch Phân Nhánh Giả Thuyết Tương Tác (3 Tầng Лоgic Hệ 9+)
+                            </h2>
+                            <p class="text-xs text-slate-300">
+                                Chọn từng nhánh giả thuyết từ tổng quát đến cụ thể. Mỗi nhánh được kích hoạt sẽ dẫn dòng điện thu hẹp phạm vi từ <b>100%</b> xuống <b>10% đích ngắm hành động</b>.
+                            </p>
+                        </div>
+
+                        <!-- Các nút điều khiển mạch nhanh -->
+                        <div class="flex flex-wrap items-center gap-2 shrink-0">
+                            <button onclick="autoRunCircuitForCurrentStudent()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white text-xs font-bold shadow-lg shadow-sky-500/20 transition-all flex items-center gap-1.5">
+                                <i class="fas fa-bolt text-amber-300"></i>
+                                <span id="autoCircuitBtnLabel">Chạy mạch tự động theo điểm HS-01</span>
+                            </button>
+                            <button onclick="resetCircuitTree()" class="px-3 py-2 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-600 text-xs font-semibold transition-all flex items-center gap-1.5">
+                                <i class="fas fa-redo-alt text-sky-400"></i> Làm lại từ nhánh gốc
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- THANH ĐO ĐỘ THU HẸP PHẠM VI QUYẾT ĐỊNH (SCOPE NARROWING METER) -->
+                    <div class="mt-4 bg-slate-900/90 rounded-xl p-3.5 border border-sky-500/25">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                            <div class="flex items-center space-x-2 text-xs font-bold text-sky-300">
+                                <i class="fas fa-compress-arrows-alt"></i>
+                                <span>ĐỘ THU HẸP PHẠM VI QUYẾT ĐỊNH (SCOPE FUNNEL):</span>
+                                <span id="scopeStatusText" class="text-amber-300 font-extrabold">100% (Phạm vi Rộng - Chưa chọn nhánh)</span>
+                            </div>
+                            <div id="circuitBreadcrumb" class="text-[11px] text-slate-300 font-mono truncate">
+                                [Nút Gốc 9+] ➔ Hãy chọn 1 nhánh ở Tầng 1
+                            </div>
+                        </div>
+
+                        <!-- Thanh tiến trình phễu thu hẹp 4 mốc: 100% -> 60% -> 30% -> 10% -->
+                        <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden p-0.5 border border-slate-700">
+                            <div id="scopeMeterBar" class="h-full rounded-full transition-all duration-700 bg-gradient-to-r from-sky-400 via-indigo-400 to-emerald-400" style="width: 15%"></div>
+                        </div>
+                        <div class="grid grid-cols-4 text-[10px] font-semibold text-slate-400 mt-1.5">
+                            <div class="text-sky-300">● Khởi điểm: 100% Rộng</div>
+                            <div id="stepLabel1" class="text-center">○ Tầng 1: Còn 60% (Định hình)</div>
+                            <div id="stepLabel2" class="text-center">○ Tầng 2: Còn 30% (Khu biệt)</div>
+                            <div id="stepLabel3" class="text-right">○ Tầng 3: 10% Đích ngắm cụ thể</div>
+                        </div>
+                    </div>
+
+                    <!-- SƠ ĐỒ MẠCH 3 TẦNG PHÂN NHÁNH (INTERACTIVE CIRCUIT NODES) -->
+                    <div class="mt-5 space-y-2">
+                        
+                        <!-- ================= TẦNG 1: GIẢ THUYẾT ĐỊNH HƯỚNG ĐẦU RA (100% -> 60%) ================= -->
+                        <div class="space-y-2.5">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-extrabold uppercase tracking-wider text-sky-300 flex items-center gap-2">
+                                    <span class="w-6 h-6 rounded-full bg-sky-500 text-slate-950 flex items-center justify-center font-black text-xs">1</span>
+                                    <span>TẦNG 1 – GIẢ THUYẾT ĐỊNH HƯỚNG ĐẦU RA SAU TỐT NGHIỆP 9+ (Thu hẹp phạm vi xuống 60%)</span>
+                                </span>
+                                <span class="text-[11px] text-slate-400 hidden sm:inline">Chọn 1 trong 3 nhánh mạch chính</span>
+                            </div>
+
+                            <div id="circuitLevel1Grid" class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+                                <!-- Render động từ JS -->
+                            </div>
+                        </div>
+
+                        <!-- Dây dẫn mạch điện từ Tầng 1 xuống Tầng 2 -->
+                        <div id="wire1to2" class="hidden flex-col items-center py-1">
+                            <div class="circuit-wire-v h-7"></div>
+                            <div class="px-3 py-0.5 rounded-full bg-sky-500/20 border border-sky-400/50 text-[10px] text-sky-300 font-bold">
+                                ⚡ Dòng giả thuyết đã thu hẹp còn 60% phạm vi ➔ Mở khóa Tầng 2
+                            </div>
+                            <div class="circuit-wire-v h-4"></div>
+                        </div>
+
+                        <!-- ================= TẦNG 2: GIẢ THUYẾT ĐỐI CHIẾU NĂNG LỰC & ĐIỂM NGHẼN (60% -> 30%) ================= -->
+                        <div id="circuitLevel2Wrapper" class="hidden space-y-2.5 pt-1">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-extrabold uppercase tracking-wider text-indigo-300 flex items-center gap-2">
+                                    <span class="w-6 h-6 rounded-full bg-indigo-400 text-slate-950 flex items-center justify-center font-black text-xs">2</span>
+                                    <span>TẦNG 2 – GIẢ THUYẾT ĐỐI CHIẾU NĂNG LỰC CỐT LÕI & ĐIỂM NGHẼN HIỆN TẠI (Thu hẹp xuống 30%)</span>
+                                </span>
+                                <span class="text-[11px] text-indigo-300/80">Phân nhánh con từ lựa chọn Tầng 1</span>
+                            </div>
+
+                            <div id="circuitLevel2Grid" class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                                <!-- Render động từ JS dựa theo nhánh Tầng 1 -->
+                            </div>
+                        </div>
+
+                        <!-- Dây dẫn mạch điện từ Tầng 2 xuống Tầng 3 -->
+                        <div id="wire2to3" class="hidden flex-col items-center py-1">
+                            <div class="circuit-wire-v h-7"></div>
+                            <div class="px-3 py-0.5 rounded-full bg-indigo-500/20 border border-indigo-400/50 text-[10px] text-indigo-200 font-bold">
+                                ⚡ Dòng giả thuyết đã thu hẹp còn 30% phạm vi ➔ Mở khóa Tầng 3 (Kiểm chứng pháp lý/hồ sơ)
+                            </div>
+                            <div class="circuit-wire-v h-4"></div>
+                        </div>
+
+                        <!-- ================= TẦNG 3: GIẢ THUYẾT XÁC MINH ĐIỀU KIỆN & HỒ SƠ (30% -> 10%) ================= -->
+                        <div id="circuitLevel3Wrapper" class="hidden space-y-2.5 pt-1">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-300 flex items-center gap-2">
+                                    <span class="w-6 h-6 rounded-full bg-emerald-400 text-slate-950 flex items-center justify-center font-black text-xs">3</span>
+                                    <span>TẦNG 3 – GIẢ THUYẾT XÁC MINH ĐIỀU KIỆN PHÁP LÝ & HỒ SƠ ĐƠN VỊ (Thu hẹp về 10% Đích ngắm)</span>
+                                </span>
+                                <span class="text-[11px] text-emerald-300/80">Bước chốt phạm vi hành động</span>
+                            </div>
+
+                            <div id="circuitLevel3Grid" class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                                <!-- Render động từ JS dựa theo nhánh Tầng 2 -->
+                            </div>
+                        </div>
+
+                        <!-- Dây dẫn mạch tới Hộp Kết quả cuối cùng -->
+                        <div id="wire3toResult" class="hidden flex-col items-center py-1">
+                            <div class="circuit-wire-v h-6"></div>
+                            <div class="px-3.5 py-1 rounded-full bg-emerald-500/30 border border-emerald-400 text-xs text-emerald-200 font-extrabold shadow-lg">
+                                🎯 ĐÃ THU HẸP VỀ 10% PHẠM VI TRỌNG TÂM – XUẤT KẾT LUẬN & THẺ HÀNH ĐỘNG
+                            </div>
+                            <div class="circuit-wire-v h-4"></div>
+                        </div>
+
+                        <!-- ================= HỘP KẾT QUẢ ĐẦU RA CỦA MẠCH PHÂN NHÁNH (10% ĐÍCH NGẮM) ================= -->
+                        <div id="circuitFinalOutputBox" class="hidden bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 rounded-2xl p-5 border-2 border-emerald-400/70 shadow-2xl space-y-4">
+                            <!-- Render động từ JS khi chọn xong Tầng 3 -->
+                        </div>
+
+                    </div>
+                </div>
+                <!-- ================= KẾT THÚC KHỐI BIỂU ĐỒ MẠCH PHÂN NHÁNH ================= -->
+
+                <!-- Header Bản đồ quyết định truyền thống -->
                 <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div>
@@ -1067,6 +1257,7 @@
                 goal2: "Cơ khí động lực & Bảo dưỡng công nghiệp",
                 reason: "Hứng thú hoạt động thực hành xưởng, kết quả Vật lí và Hóa học khá; muốn tìm hiểu khả năng học tiếp nhưng chưa xác minh đầy đủ diện dự thi và điều kiện đầu vào.",
                 verifyStatus: "Cần xác minh tại đơn vị",
+                defaultCircuitPath: ["A", "A1", "A1_V1"],
                 kpiCourses: 12,
                 kpiAvgProgress: "68%",
                 kpiDaysLeft: 28,
@@ -1126,6 +1317,7 @@
                 goal2: "Tự động hóa công nghiệp",
                 reason: "Thích lắp đặt mạch điện và điều khiển PLC; điểm thực hành nghề đạt 8.5 nhưng lo ngại môn Tiếng Anh và thủ tục xét liên thông.",
                 verifyStatus: "Đang chờ Phòng Đào tạo phản hồi",
+                defaultCircuitPath: ["A", "A1", "A1_V2"],
                 kpiCourses: 11,
                 kpiAvgProgress: "74%",
                 kpiDaysLeft: 28,
@@ -1175,6 +1367,7 @@
                 goal2: "Lập trình Web & Quản trị mạng",
                 reason: "Yêu thích sáng tạo hình ảnh nhưng chưa rõ nên đi làm ngay sau tốt nghiệp trung cấp 9+ hay học liên thông lên Cao đẳng.",
                 verifyStatus: "Cần xác minh tại đơn vị",
+                defaultCircuitPath: ["C", "C2", "C2_V1"],
                 kpiCourses: 12,
                 kpiAvgProgress: "64%",
                 kpiDaysLeft: 28,
@@ -1218,6 +1411,7 @@
                 goal2: "Kỹ thuật viên Kiểm nghiệm chất lượng (QA/QC)",
                 reason: "Yêu thích thí nghiệm Hóa học (Hóa 8.1) nhưng điểm Toán và Lý còn yếu, tự đặt mục tiêu ôn thi quá cao gây căng thẳng.",
                 verifyStatus: "Đã xác minh hợp lệ tại đơn vị",
+                defaultCircuitPath: ["C", "C1", "C1_V2"],
                 kpiCourses: 12,
                 kpiAvgProgress: "62%",
                 kpiDaysLeft: 28,
@@ -1255,6 +1449,7 @@
                 goal2: "Logistics và Quản lý chuỗi cung ứng",
                 reason: "Cẩn thận với số liệu, điểm Văn và Toán khá đều nhưng thiếu thông tin về quy chế cộng điểm nghề và hồ sơ dự thi.",
                 verifyStatus: "Cần xác minh tại đơn vị",
+                defaultCircuitPath: ["A", "A2", "A2_V1"],
                 kpiCourses: 10,
                 kpiAvgProgress: "71%",
                 kpiDaysLeft: 28,
@@ -1291,6 +1486,7 @@
                 goal2: "Học liên thông Cao đẳng hệ vừa làm vừa học",
                 reason: "Tay nghề thực hành máy CNC rất tốt (8.8), muốn đi làm tại doanh nghiệp ở Đồng Nai ngay sau khi hoàn tất chương trình.",
                 verifyStatus: "Đã xác minh hợp lệ tại đơn vị",
+                defaultCircuitPath: ["B", "B1", "B1_V2"],
                 kpiCourses: 12,
                 kpiAvgProgress: "76%",
                 kpiDaysLeft: 28,
@@ -1321,16 +1517,267 @@
             }
         ];
 
+        // =========================================================================
+        // CẤU TRÚC DỮ LIỆU CÂY MẠCH PHÂN NHÁNH GIẢ THUYẾT 3 TẦNG (CIRCUIT TREE DATA)
+        // =========================================================================
+        const CIRCUIT_BRANCH_TREE = {
+            level1: [
+                {
+                    id: "A",
+                    code: "NHÁNH MẠCH A",
+                    icon: "fa-graduation-cap",
+                    title: "Giả thuyết A: Ưu tiên Học tiếp Liên thông (CĐ/ĐH) & Thi tốt nghiệp THPT",
+                    desc: "Muốn dùng nền tảng nghề 9+ và điểm thi văn hóa để học nâng cao lên bậc Cao đẳng hoặc Đại học cùng nhóm ngành.",
+                    scope: "60%"
+                },
+                {
+                    id: "B",
+                    code: "NHÁNH MẠCH B",
+                    icon: "fa-tools",
+                    title: "Giả thuyết B: Ưu tiên Đi làm Kỹ thuật viên ngay sau tốt nghiệp 9+",
+                    desc: "Muốn hoàn thành bằng Trung cấp nghề + tốt nghiệp văn hóa để vào làm việc ngay tại KCN Trảng Bom / Đồng Nai.",
+                    scope: "60%"
+                },
+                {
+                    id: "C",
+                    code: "NHÁNH MẠCH C",
+                    icon: "fa-balance-scale",
+                    title: "Giả thuyết C: Đang phân vân giữa Học tiếp & Đi làm (Cần phép thử 2 tuần)",
+                    desc: "Chưa chốt hẳn hướng đi; đang bị giằng co bởi áp lực lịch học văn hóa, đồ án nghề hoặc thông tin học phí.",
+                    scope: "60%"
+                }
+            ],
+            level2: {
+                "A": [
+                    {
+                        id: "A1",
+                        code: "GIẢ THUYẾT A1",
+                        title: "Thực hành nghề & Lý/Hóa khá (>=7.0), nhưng Toán hoặc Tiếng Anh còn dưới mục tiêu",
+                        desc: "Có tín hiệu tốt về năng lực chuyên môn kỹ thuật, nhưng tồn tại khoảng cách ở môn văn hóa bắt buộc.",
+                        tag: "Cần củng cố năng lực"
+                    },
+                    {
+                        id: "A2",
+                        code: "GIẢ THUYẾT A2",
+                        title: "Điểm văn hóa khá đồng đều, nhưng chưa rõ tổ hợp xét tuyển & quy chế cộng điểm",
+                        desc: "Năng lực học tập ổn định nhưng thiếu thông tin chính xác về phương thức tuyển sinh liên thông hiện hành.",
+                        tag: "Cần tìm hiểu lựa chọn"
+                    }
+                ],
+                "B": [
+                    {
+                        id: "B1",
+                        code: "GIẢ THUYẾT B1",
+                        title: "Tay nghề thực hành xưởng vững (>=8.0), nhưng lo ngại điểm xét tốt nghiệp văn hóa",
+                        desc: "Có nguy cơ chủ quan môn Ngữ văn/Toán/Anh trong giai đoạn nước rút đi thực tập doanh nghiệp.",
+                        tag: "Cần củng cố năng lực"
+                    },
+                    {
+                        id: "B2",
+                        code: "GIẢ THUYẾT B2",
+                        title: "Đã sẵn sàng tay nghề, cần kết nối doanh nghiệp thực tập & vị trí tuyển dụng tại địa phương",
+                        desc: "Cần rà soát hồ sơ kỹ năng nghề và tìm hiểu yêu cầu tuyển dụng thực tế tại KCN Trảng Bom.",
+                        tag: "Cần tìm hiểu lựa chọn"
+                    }
+                ],
+                "C": [
+                    {
+                        id: "C1",
+                        code: "GIẢ THUYẾT C1",
+                        title: "Quản lý thời gian chưa tốt, dễ quá tải giữa lịch ôn văn hóa lớp 12 và thực hành nghề",
+                        desc: "Đặt quá nhiều mục tiêu cùng lúc dẫn tới căng thẳng, cần cắt giảm còn tối đa 02 ưu tiên trong 2–4 tuần.",
+                        tag: "Cần củng cố năng lực"
+                    },
+                    {
+                        id: "C2",
+                        code: "GIẢ THUYẾT C2",
+                        title: "Chưa rõ thời gian, học phí và điều kiện chuyển tiếp từ Trung cấp 9+ lên Cao đẳng",
+                        desc: "Phân vân do thiếu dữ liệu đối sánh thực tế giữa phương án đi làm ngay và phương án học liên thông.",
+                        tag: "Cần tìm hiểu lựa chọn"
+                    }
+                ]
+            },
+            level3: {
+                "A1": [
+                    {
+                        id: "A1_V1",
+                        code: "KIỂM CHỨNG A1.1",
+                        title: "Chưa rõ diện dự thi THPT & hồ sơ xét tuyển (Theo TT 24/2024 & TT 13/2026)",
+                        verifyTag: "Cần xác minh điều kiện/hồ sơ",
+                        finding: "Hứng thú học tiếp kỹ thuật (Lý/Hóa/Nghề >=7.0), nhưng Toán/Anh dưới mục tiêu và chưa rõ hồ sơ dự thi THPT.",
+                        category: "Cần củng cố năng lực",
+                        interpretation: "Xếp đồng thời vào nhóm 'Cần củng cố năng lực' (môn Toán/Anh) và 'Cần xác minh điều kiện/hồ sơ' tại Phòng Đào tạo.",
+                        action: "Ôn chuyên đề Toán/Anh cơ bản trong 2 tuần & trực tiếp lên Phòng Đào tạo xác minh hồ sơ dự thi.",
+                        supporter: "GV bộ môn & Phòng Đào tạo",
+                        criteria: "Hoàn thành bộ 15 câu ôn tập + Có phiếu trả lời hồ sơ từ Phòng Đào tạo"
+                    },
+                    {
+                        id: "A1_V2",
+                        code: "KIỂM CHỨNG A1.2",
+                        title: "Đã xác minh rõ diện dự thi tại trường, chỉ cần tập trung lấp lỗ hổng điểm văn hóa",
+                        verifyTag: "Đã rõ điều kiện • Tập trung ôn tập",
+                        finding: "Đã nắm rõ thủ tục dự thi; điểm nghẽn duy nhất hiện tại là nâng điểm môn Toán/Tiếng Anh đạt mốc mục tiêu.",
+                        category: "Cần củng cố năng lực",
+                        interpretation: "Tập trung 100% nguồn lực 2–4 tuần tới vào việc cải thiện điểm số môn văn hóa còn yếu.",
+                        action: "Thực hiện lịch ôn tập 3 chuyên đề trọng tâm môn Toán/Anh với sự kiểm tra của giáo viên bộ môn.",
+                        supporter: "GV Toán / Tiếng Anh",
+                        criteria: "Đạt điểm >= 6.5 trong bài kiểm tra đánh giá lại sau 2 tuần"
+                    }
+                ],
+                "A2": [
+                    {
+                        id: "A2_V1",
+                        code: "KIỂM CHỨNG A2.1",
+                        title: "Cần xác minh quy định điểm khuyến khích nghề & điều kiện liên thông tại đơn vị",
+                        verifyTag: "Cần xác minh điều kiện/hồ sơ",
+                        finding: "Điểm học tập khá đều nhưng chưa nắm rõ quy định mới về cộng điểm nghề và hồ sơ liên thông.",
+                        category: "Cần xác minh điều kiện/hồ sơ",
+                        interpretation: "Tuyệt đối không suy diễn từ quy chế cũ; cần xác minh chính thức theo Thông tư 13/2026/TT-BGDĐT.",
+                        action: "Liên hệ bộ phận Khảo thí & Đào tạo của Phân hiệu Đồng Nai để đối chiếu hồ sơ dự thi.",
+                        supporter: "Bộ phận Khảo thí & GVCN",
+                        criteria: "Xác nhận bằng văn bản danh mục giấy tờ và quyền lợi cộng điểm (nếu có)"
+                    },
+                    {
+                        id: "A2_V2",
+                        code: "KIỂM CHỨNG A2.2",
+                        title: "Đã rõ quy chế thi, cần tìm hiểu sâu chương trình đào tạo bậc Cao đẳng/Đại học mục tiêu",
+                        verifyTag: "Cần tìm hiểu lựa chọn",
+                        finding: "Hồ sơ hợp lệ, học lực ổn định; cần tìm hiểu kỹ hơn về chuyên ngành dự kiến theo học.",
+                        category: "Cần tìm hiểu lựa chọn",
+                        interpretation: "Giai đoạn phù hợp để đối chiếu môn học chuyên ngành và chuẩn đầu ra bậc học tiếp theo.",
+                        action: "Đọc khung chương trình đào tạo và đặt 3 câu hỏi tư vấn trực tiếp với giảng viên chuyên ngành.",
+                        supporter: "Giảng viên Khoa chuyên môn",
+                        criteria: "Hoàn thành phiếu ghi chú tìm hiểu ngành học mục tiêu"
+                    }
+                ],
+                "B1": [
+                    {
+                        id: "B1_V1",
+                        code: "KIỂM CHỨNG B1.1",
+                        title: "Chưa rõ điều kiện công nhận tốt nghiệp văn hóa song song bằng Trung cấp nghề",
+                        verifyTag: "Cần xác minh điều kiện/hồ sơ",
+                        finding: "Tay nghề thực hành tốt nhưng chưa rõ điều kiện hoàn thành chương trình văn hóa để đủ điều kiện nhận bằng.",
+                        category: "Cần xác minh điều kiện/hồ sơ",
+                        interpretation: "Cần rà soát ngay điều kiện công nhận tốt nghiệp tại Giáo vụ để không bị chậm lộ trình ra trường đi làm.",
+                        action: "Đối chiếu bảng điểm các học kỳ tại Giáo vụ và lập lịch giữ vững điểm các môn văn hóa trên mức an toàn.",
+                        supporter: "Giáo vụ & GVCN",
+                        criteria: "Xác nhận đủ điều kiện dự xét tốt nghiệp & không có môn dưới trung bình"
+                    },
+                    {
+                        id: "B1_V2",
+                        code: "KIỂM CHỨNG B1.2",
+                        title: "Đã xác minh đủ điều kiện hồ sơ, cần duy trì nhịp ôn văn hóa song song thực tập xưởng",
+                        verifyTag: "Cần củng cố năng lực",
+                        finding: "Tay nghề vững (>=8.0), đã rõ thủ tục tốt nghiệp nhưng cần giữ điểm Ngữ văn/Tiếng Anh ổn định.",
+                        category: "Cần củng cố năng lực",
+                        interpretation: "Không chủ quan môn văn hóa trong giai đoạn cuối năm lớp 12.",
+                        action: "Duy trì lịch ôn văn hóa 4 buổi/tuần song song hoàn thành nhật ký thực tập doanh nghiệp.",
+                        supporter: "GV Văn hóa & Khoa chuyên môn",
+                        criteria: "Hoàn thành đầy đủ bài kiểm tra định kỳ văn hóa và nhật ký thực tập"
+                    }
+                ],
+                "B2": [
+                    {
+                        id: "B2_V1",
+                        code: "KIỂM CHỨNG B2.1",
+                        title: "Cần xác minh thủ tục giới thiệu thực tập & hợp đồng đào tạo tại doanh nghiệp liên kết",
+                        verifyTag: "Cần xác minh điều kiện/hồ sơ",
+                        finding: "Muốn đi làm ngay tại KCN Trảng Bom nhưng chưa rõ quy trình nhà trường giới thiệu thực tập tốt nghiệp.",
+                        category: "Cần xác minh điều kiện/hồ sơ",
+                        interpretation: "Cần xác minh tại bộ phận Quan hệ doanh nghiệp của Phân hiệu.",
+                        action: "Đăng ký danh sách thực tập và xác minh hồ sơ thực tập tốt nghiệp tại Khoa chuyên môn.",
+                        supporter: "Bộ phận Quan hệ Doanh nghiệp",
+                        criteria: "Hoàn tất hồ sơ đăng ký đợt thực tập doanh nghiệp đúng hạn"
+                    },
+                    {
+                        id: "B2_V2",
+                        code: "KIỂM CHỨNG B2.2",
+                        title: "Cần chuẩn bị hồ sơ năng lực nghề (Portfolio/Tay nghề) để ứng tuyển kỹ thuật viên",
+                        verifyTag: "Cần tìm hiểu lựa chọn",
+                        finding: "Đã nắm rõ quy trình thực tập, cần chuẩn bị kỹ năng phỏng vấn và minh chứng tay nghề thực tế.",
+                        category: "Cần tìm hiểu lựa chọn",
+                        interpretation: "Tập trung hoàn thiện sản phẩm thực hành nghề làm minh chứng khi gặp nhà tuyển dụng.",
+                        action: "Hoàn thiện 01 sản phẩm/báo cáo thực hành nghề tiêu biểu có nhận xét của giáo viên hướng dẫn.",
+                        supporter: "GV Hướng dẫn Thực hành",
+                        criteria: "Có sản phẩm/báo cáo thực hành đạt loại Khá trở lên"
+                    }
+                ],
+                "C1": [
+                    {
+                        id: "C1_V1",
+                        code: "KIỂM CHỨNG C1.1",
+                        title: "Quá tải lịch học và chưa rõ quy định miễn/giảm hoặc bảo lưu kết quả học phần nghề",
+                        verifyTag: "Cần xác minh điều kiện/hồ sơ",
+                        finding: "Đang bị căng thẳng lịch học văn hóa + nghề, đồng thời thiếu thông tin về quy chế học vụ tại trường.",
+                        category: "Cần xác minh điều kiện/hồ sơ",
+                        interpretation: "Cần giảm tải áp lực ngay và xác minh quy chế học vụ chính thức cùng GVCN.",
+                        action: "Gặp GVCN điều chỉnh kế hoạch học tập 2 tuần (chỉ giữ tối đa 2 ưu tiên) và hỏi rõ quy chế tại Phòng Đào tạo.",
+                        supporter: "GVCN & Phòng Đào tạo",
+                        criteria: "Có thời khóa biểu 2 tuần mới vừa sức, được GVCN xác nhận"
+                    },
+                    {
+                        id: "C1_V2",
+                        code: "KIỂM CHỨNG C1.2",
+                        title: "Đã rõ quy chế học tập, cần thiết lập lại kỷ luật thời gian & giảm mục tiêu quá sức",
+                        verifyTag: "Cần củng cố năng lực",
+                        finding: "Hồ sơ đã xác minh hợp lệ nhưng tự đặt mục tiêu ôn thi quá cao gây quá tải tâm lý.",
+                        category: "Cần củng cố năng lực",
+                        interpretation: "Điều chỉnh độ khó kế hoạch 2–4 tuần để bảo đảm sức khỏe và hiệu quả thực chất.",
+                        action: "Chia nhỏ nhiệm vụ ôn tập thành các phiên 25 phút/ngày, ưu tiên nắm chắc kiến thức cơ bản.",
+                        supporter: "GV Tư vấn / Thầy Trưởng",
+                        criteria: "Duy trì đều đặn lịch học 2 tuần không bị trễ hạn bài tập"
+                    }
+                ],
+                "C2": [
+                    {
+                        id: "C2_V1",
+                        code: "KIỂM CHỨNG C2.1",
+                        title: "Cần xác minh chính thức điều kiện, thời gian & học phí chuyển tiếp Trung cấp lên Cao đẳng",
+                        verifyTag: "Cần xác minh điều kiện/hồ sơ",
+                        finding: "Phân vân giữa đi làm và học tiếp do chưa có thông tin chính thức về lộ trình liên thông tại trường.",
+                        category: "Cần xác minh điều kiện/hồ sơ",
+                        interpretation: "Xếp vào nhóm 'Cần xác minh điều kiện' và 'Cần tìm hiểu lựa chọn' thông qua Phòng Tuyển sinh.",
+                        action: "Làm việc với Phòng Tuyển sinh & Đào tạo để lấy phiếu thông tin lộ trình liên thông Cao đẳng chính thức.",
+                        supporter: "Phòng Tuyển sinh & Cố vấn học tập",
+                        criteria: "Có bảng so sánh rõ 2 phương án (Đi làm ngay vs Liên thông CĐ) sau 2 tuần"
+                    },
+                    {
+                        id: "C2_V2",
+                        code: "KIỂM CHỨNG C2.2",
+                        title: "Đã có thông tin học phí/thời gian, cần trải nghiệm thực tế 2 tuần để tự đánh giá mức độ phù hợp",
+                        verifyTag: "Cần tìm hiểu lựa chọn",
+                        finding: "Đã nắm thông tin thủ tục nhưng cần phép thử thực tế để biết bản thân hợp học nâng cao hay đi làm sớm.",
+                        category: "Cần tìm hiểu lựa chọn",
+                        interpretation: "Sử dụng chu kỳ 2–4 tuần làm phép thử năng lực tự học và thực hành chuyên môn.",
+                        action: "Hoàn thành 01 dự án thực hành nhỏ của ngành và trao đổi với cựu học sinh hệ 9+.",
+                        supporter: "GV Chuyên ngành",
+                        criteria: "Tự đánh giá lại mức độ hứng thú và kết quả sau 2 tuần thử nghiệm"
+                    }
+                ]
+            }
+        };
+
         // 2. QUẢN LÝ STATE TOÀN CỤC
         let studentsData = [];
         let currentStudentId = "HS-01";
         let currentRole = "student"; // 'student' | 'teacher'
+
+        // State của Biểu đồ mạch phân nhánh (Circuit Tree)
+        let selectedBranchL1 = null;
+        let selectedBranchL2 = null;
+        let selectedBranchL3 = null;
 
         function initApp() {
             const saved = localStorage.getItem("EDUPATH_9PLUS_DATA_V1");
             if (saved) {
                 try {
                     studentsData = JSON.parse(saved);
+                    // Đảm bảo tương thích dữ liệu cũ nếu chưa có defaultCircuitPath
+                    studentsData.forEach((s, idx) => {
+                        if (!s.defaultCircuitPath && DEFAULT_STUDENTS[idx]) {
+                            s.defaultCircuitPath = DEFAULT_STUDENTS[idx].defaultCircuitPath;
+                        }
+                    });
                 } catch (e) {
                     studentsData = JSON.parse(JSON.stringify(DEFAULT_STUDENTS));
                 }
@@ -1338,6 +1785,8 @@
                 studentsData = JSON.parse(JSON.stringify(DEFAULT_STUDENTS));
             }
             renderGlobalStudentSelect();
+            // Khởi tạo nhánh mặc định theo học sinh hiện tại để khi mở Bản đồ quyết định là có ngay sơ đồ mạch sống động
+            loadStudentDefaultCircuit(getCurrentStudent());
             renderAllViews();
         }
 
@@ -1347,6 +1796,18 @@
 
         function getCurrentStudent() {
             return studentsData.find(s => s.id === currentStudentId) || studentsData[0];
+        }
+
+        function loadStudentDefaultCircuit(st) {
+            if (st && st.defaultCircuitPath && st.defaultCircuitPath.length === 3) {
+                selectedBranchL1 = st.defaultCircuitPath[0];
+                selectedBranchL2 = st.defaultCircuitPath[1];
+                selectedBranchL3 = st.defaultCircuitPath[2];
+            } else {
+                selectedBranchL1 = "A";
+                selectedBranchL2 = "A1";
+                selectedBranchL3 = "A1_V1";
+            }
         }
 
         // 3. RENDER DROPDOWN CHỌN HỌC SINH TRÊN SIDEBAR & HEADER
@@ -1361,13 +1822,19 @@
             document.getElementById("headerStudentName").textContent = `Mã ${st.id} (Giả định)`;
             document.getElementById("headerStudentClass").textContent = st.stream;
             document.getElementById("bannerBadgeText").textContent = `Đang thao tác hồ sơ: Mã ${st.id} • ${st.stream}`;
+            const autoBtnLbl = document.getElementById("autoCircuitBtnLabel");
+            if (autoBtnLbl) {
+                autoBtnLbl.textContent = `Chạy mạch tự động theo điểm ${st.id}`;
+            }
         }
 
         function handleStudentChange(studentId) {
             currentStudentId = studentId;
+            const st = getCurrentStudent();
+            loadStudentDefaultCircuit(st);
             renderGlobalStudentSelect();
             renderAllViews();
-            showToast(`Đã chuyển sang dữ liệu hồ sơ giả định ${studentId}`);
+            showToast(`Đã chuyển sang hồ sơ ${studentId} & đồng bộ mạch phân nhánh!`);
         }
 
         // 4. RENDER TẤT CẢ CÁC MÀN HÌNH
@@ -1378,6 +1845,294 @@
             renderDecisionMapTab(st);
             renderActionCardsTab(st);
             renderCasesTab();
+        }
+
+        // =========================================================================
+        // HỆ THỐNG BIỂU ĐỒ MẠCH PHÂN NHÁNH TƯƠNG TÁC (CIRCUIT BRANCHING ENGINE)
+        // =========================================================================
+        function openDecisionMapAndCircuit() {
+            switchTab('decision-map');
+            // Cuộn mượt lên đầu tới ngay Biểu đồ mạch phân nhánh và kích hoạt hiệu ứng sáng mạch
+            const mainScroll = document.getElementById("mainScrollArea");
+            if (mainScroll) mainScroll.scrollTo({ top: 0, behavior: "smooth" });
+            const circuitBox = document.getElementById("circuitBranchingContainer");
+            if (circuitBox) {
+                circuitBox.classList.remove("circuit-highlight-ring");
+                void circuitBox.offsetWidth; // Reflow
+                circuitBox.classList.add("circuit-highlight-ring");
+            }
+            showToast("⚡ Đã mở Biểu đồ mạch phân nhánh 9+! Hãy chọn từng nhánh giả thuyết để thu hẹp phạm vi.");
+        }
+
+        function renderCircuitDiagram() {
+            // 1. Render Tầng 1 (3 nhánh chính A, B, C)
+            const l1Grid = document.getElementById("circuitLevel1Grid");
+            l1Grid.innerHTML = CIRCUIT_BRANCH_TREE.level1.map(item => {
+                const isActive = selectedBranchL1 === item.id;
+                return `
+                    <div onclick="selectCircuitBranchL1('${item.id}')" 
+                        class="circuit-node cursor-pointer rounded-xl p-4 border ${isActive ? 'circuit-node-active border-sky-400' : 'bg-slate-900/80 border-slate-700/80 hover:border-sky-500/60'} flex flex-col justify-between space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-wider ${isActive ? 'bg-sky-400 text-slate-950' : 'bg-slate-800 text-sky-400'}">
+                                <i class="fas ${item.icon} mr-1"></i>${item.code}
+                            </span>
+                            <span class="text-[11px] font-bold ${isActive ? 'text-emerald-300' : 'text-slate-400'}">
+                                ${isActive ? '⚡ Đang kích hoạt' : 'Thu hẹp ➔ 60%'}
+                            </span>
+                        </div>
+                        <div class="text-xs md:text-sm font-bold text-white leading-snug">${item.title}</div>
+                        <p class="text-[11px] text-slate-300 leading-relaxed">${item.desc}</p>
+                    </div>
+                `;
+            }).join("");
+
+            // 2. Render Tầng 2 nếu đã chọn Tầng 1
+            const wire12 = document.getElementById("wire1to2");
+            const l2Wrap = document.getElementById("circuitLevel2Wrapper");
+            const l2Grid = document.getElementById("circuitLevel2Grid");
+
+            if (selectedBranchL1 && CIRCUIT_BRANCH_TREE.level2[selectedBranchL1]) {
+                wire12.classList.remove("hidden");
+                wire12.classList.add("flex");
+                l2Wrap.classList.remove("hidden");
+
+                const l2Items = CIRCUIT_BRANCH_TREE.level2[selectedBranchL1];
+                l2Grid.innerHTML = l2Items.map(item => {
+                    const isActive = selectedBranchL2 === item.id;
+                    return `
+                        <div onclick="selectCircuitBranchL2('${item.id}')" 
+                            class="circuit-node cursor-pointer rounded-xl p-4 border ${isActive ? 'circuit-node-active border-indigo-400' : 'bg-slate-900/80 border-slate-700/80 hover:border-indigo-400/60'} flex flex-col justify-between space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="px-2.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase ${isActive ? 'bg-indigo-400 text-slate-950' : 'bg-slate-800 text-indigo-300'}">
+                                    ${item.code}
+                                </span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-500/20 text-amber-300 border border-amber-400/30">
+                                    ${item.tag}
+                                </span>
+                            </div>
+                            <div class="text-xs md:text-sm font-bold text-white leading-snug">${item.title}</div>
+                            <p class="text-[11px] text-slate-300 leading-relaxed">${item.desc}</p>
+                            <div class="text-[11px] font-bold ${isActive ? 'text-emerald-300' : 'text-sky-400'} pt-1">
+                                ${isActive ? '⚡ Đã chọn nhánh này (Còn 30% phạm vi)' : '👉 Bấm để chọn giả thuyết này (Thu hẹp ➔ 30%)'}
+                            </div>
+                        </div>
+                    `;
+                }).join("");
+            } else {
+                wire12.classList.add("hidden");
+                wire12.classList.remove("flex");
+                l2Wrap.classList.add("hidden");
+            }
+
+            // 3. Render Tầng 3 nếu đã chọn Tầng 2
+            const wire23 = document.getElementById("wire2to3");
+            const l3Wrap = document.getElementById("circuitLevel3Wrapper");
+            const l3Grid = document.getElementById("circuitLevel3Grid");
+
+            if (selectedBranchL2 && CIRCUIT_BRANCH_TREE.level3[selectedBranchL2]) {
+                wire23.classList.remove("hidden");
+                wire23.classList.add("flex");
+                l3Wrap.classList.remove("hidden");
+
+                const l3Items = CIRCUIT_BRANCH_TREE.level3[selectedBranchL2];
+                l3Grid.innerHTML = l3Items.map(item => {
+                    const isActive = selectedBranchL3 === item.id;
+                    return `
+                        <div onclick="selectCircuitBranchL3('${item.id}')" 
+                            class="circuit-node cursor-pointer rounded-xl p-4 border ${isActive ? 'circuit-node-active border-emerald-400' : 'bg-slate-900/80 border-slate-700/80 hover:border-emerald-400/60'} flex flex-col justify-between space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="px-2.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase ${isActive ? 'bg-emerald-400 text-slate-950' : 'bg-slate-800 text-emerald-300'}">
+                                    ${item.code}
+                                </span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-500/20 text-rose-300 border border-rose-400/30">
+                                    ${item.verifyTag}
+                                </span>
+                            </div>
+                            <div class="text-xs md:text-sm font-bold text-white leading-snug">${item.title}</div>
+                            <p class="text-[11px] text-slate-300 leading-relaxed"><b>Hành động chốt:</b> ${item.action}</p>
+                            <div class="text-[11px] font-bold ${isActive ? 'text-emerald-300' : 'text-sky-400'} pt-1">
+                                ${isActive ? '🎯 Đích ngắm đã khóa (10% phạm vi cốt lõi)' : '👉 Chọn để chốt kết luận & Thẻ hành động (10%)'}
+                            </div>
+                        </div>
+                    `;
+                }).join("");
+            } else {
+                wire23.classList.add("hidden");
+                wire23.classList.remove("flex");
+                l3Wrap.classList.add("hidden");
+            }
+
+            // 4. Render Hộp Kết quả cuối cùng nếu đã chọn Tầng 3
+            const wire3Res = document.getElementById("wire3toResult");
+            const finalBox = document.getElementById("circuitFinalOutputBox");
+
+            if (selectedBranchL2 && selectedBranchL3 && CIRCUIT_BRANCH_TREE.level3[selectedBranchL2]) {
+                const chosenLeaf = CIRCUIT_BRANCH_TREE.level3[selectedBranchL2].find(x => x.id === selectedBranchL3);
+                const chosenL1 = CIRCUIT_BRANCH_TREE.level1.find(x => x.id === selectedBranchL1);
+                const chosenL2 = CIRCUIT_BRANCH_TREE.level2[selectedBranchL1]?.find(x => x.id === selectedBranchL2);
+
+                if (chosenLeaf) {
+                    wire3Res.classList.remove("hidden");
+                    wire3Res.classList.add("flex");
+                    finalBox.classList.remove("hidden");
+
+                    finalBox.innerHTML = `
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-white/10 pb-3">
+                            <div>
+                                <span class="px-2.5 py-0.5 rounded-full bg-emerald-400 text-slate-950 text-[11px] font-black uppercase">
+                                    KẾT QUẢ THU HẸP PHẠM VI (10% ĐÍCH NGẮM CỤ THỂ)
+                                </span>
+                                <h3 class="text-base md:text-lg font-extrabold text-white mt-1">
+                                    Chuỗi mạch đã chọn: ${chosenL1 ? chosenL1.code : ''} ➔ ${chosenL2 ? chosenL2.code : ''} ➔ ${chosenLeaf.code}
+                                </h3>
+                            </div>
+                            <button onclick="applyCircuitLeafToStudent()" class="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs shadow-lg shadow-emerald-500/30 transition-all flex items-center gap-2 shrink-0">
+                                <i class="fas fa-bolt"></i>
+                                <span>Đẩy vào Bảng Đối chiếu & Tạo Thẻ hành động 2–4 tuần</span>
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 text-xs">
+                            <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-700 space-y-1">
+                                <div class="text-sky-400 font-bold uppercase text-[11px]">1. Phát hiện & Giả thuyết thu hẹp</div>
+                                <p class="text-slate-200 font-medium leading-relaxed">${chosenLeaf.finding}</p>
+                            </div>
+                            <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-700 space-y-1">
+                                <div class="text-amber-400 font-bold uppercase text-[11px]">2. Nhãn phân loại & Diễn giải chuẩn</div>
+                                <div class="inline-block px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold text-[11px] mb-1">
+                                    ${chosenLeaf.category} • ${chosenLeaf.verifyTag}
+                                </div>
+                                <p class="text-slate-300 leading-relaxed">${chosenLeaf.interpretation}</p>
+                            </div>
+                            <div class="p-3.5 rounded-xl bg-slate-900/90 border border-emerald-500/40 space-y-1">
+                                <div class="text-emerald-400 font-bold uppercase text-[11px]">3. Thẻ hành động 2–4 tuần tương ứng</div>
+                                <p class="text-white font-bold leading-relaxed">${chosenLeaf.action}</p>
+                                <p class="text-[11px] text-slate-400 pt-1">
+                                    <b>Hỗ trợ:</b> ${chosenLeaf.supporter} | <b>Minh chứng:</b> ${chosenLeaf.criteria}
+                                </p>
+                            </div>
+                        </div>
+                    `;
+                }
+            } else {
+                wire3Res.classList.add("hidden");
+                wire3Res.classList.remove("flex");
+                finalBox.classList.add("hidden");
+            }
+
+            // 5. Cập nhật Thanh đo độ thu hẹp phạm vi (Scope Meter)
+            updateScopeNarrowingMeter();
+        }
+
+        function updateScopeNarrowingMeter() {
+            const statusText = document.getElementById("scopeStatusText");
+            const meterBar = document.getElementById("scopeMeterBar");
+            const breadcrumb = document.getElementById("circuitBreadcrumb");
+            const step1 = document.getElementById("stepLabel1");
+            const step2 = document.getElementById("stepLabel2");
+            const step3 = document.getElementById("stepLabel3");
+
+            step1.className = "text-center text-slate-400";
+            step2.className = "text-center text-slate-400";
+            step3.className = "text-right text-slate-400";
+
+            if (!selectedBranchL1) {
+                statusText.textContent = "100% (Phạm vi Rộng - Chưa chọn nhánh)";
+                meterBar.style.width = "15%";
+                breadcrumb.textContent = "[Nút Gốc 9+] ➔ Hãy chọn 1 nhánh ở Tầng 1";
+            } else if (selectedBranchL1 && !selectedBranchL2) {
+                statusText.textContent = "60% (Đã định hình hướng đầu ra - Chọn tiếp Tầng 2)";
+                meterBar.style.width = "45%";
+                step1.className = "text-center text-sky-300 font-bold";
+                breadcrumb.textContent = `[Gốc 9+] ➔ Nhánh ${selectedBranchL1} (60%) ➔ Chọn tiếp Tầng 2`;
+            } else if (selectedBranchL1 && selectedBranchL2 && !selectedBranchL3) {
+                statusText.textContent = "30% (Đã khu biệt điểm nghẽn năng lực - Chọn tiếp Tầng 3)";
+                meterBar.style.width = "75%";
+                step1.className = "text-center text-sky-300 font-bold";
+                step2.className = "text-center text-indigo-300 font-bold";
+                breadcrumb.textContent = `[Gốc 9+] ➔ Nhánh ${selectedBranchL1} ➔ ${selectedBranchL2} (30%) ➔ Chọn tiếp Tầng 3`;
+            } else {
+                statusText.textContent = "10% (Đã khóa đích ngắm cụ thể & Thẻ hành động 2–4 tuần!)";
+                meterBar.style.width = "100%";
+                step1.className = "text-center text-sky-300 font-bold";
+                step2.className = "text-center text-indigo-300 font-bold";
+                step3.className = "text-right text-emerald-300 font-extrabold";
+                breadcrumb.textContent = `[Gốc 9+] ➔ Nhánh ${selectedBranchL1} ➔ ${selectedBranchL2} ➔ ${selectedBranchL3} (Đích ngắm 10%)`;
+            }
+        }
+
+        function selectCircuitBranchL1(branchId) {
+            selectedBranchL1 = branchId;
+            selectedBranchL2 = null;
+            selectedBranchL3 = null;
+            renderCircuitDiagram();
+            showToast(`Đã chọn Nhánh ${branchId} (Tầng 1) – Phạm vi thu hẹp còn 60%! Hãy chọn nhánh con ở Tầng 2.`);
+        }
+
+        function selectCircuitBranchL2(branchId) {
+            selectedBranchL2 = branchId;
+            selectedBranchL3 = null;
+            renderCircuitDiagram();
+            showToast(`Đã chọn Giả thuyết ${branchId} (Tầng 2) – Phạm vi thu hẹp còn 30%! Hãy chọn bước kiểm chứng ở Tầng 3.`);
+        }
+
+        function selectCircuitBranchL3(branchId) {
+            selectedBranchL3 = branchId;
+            renderCircuitDiagram();
+            showToast(`🎯 Đã thu hẹp phạm vi về 10% cốt lõi! Bạn có thể đẩy kết quả này vào Bảng đối chiếu & Thẻ hành động.`);
+        }
+
+        function resetCircuitTree() {
+            selectedBranchL1 = null;
+            selectedBranchL2 = null;
+            selectedBranchL3 = null;
+            renderCircuitDiagram();
+            showToast("Đã làm mới Biểu đồ mạch phân nhánh về trạng thái gốc (100% phạm vi).");
+        }
+
+        function autoRunCircuitForCurrentStudent() {
+            const st = getCurrentStudent();
+            loadStudentDefaultCircuit(st);
+            renderCircuitDiagram();
+            showToast(`⚡ Đã tự động dẫn dòng mạch phân nhánh khớp với điểm và hồ sơ của ${st.id}!`);
+        }
+
+        // Đẩy kết quả nhánh đã chọn ở Tầng 3 vào thẳng Bảng đối chiếu Hợp phần B & Thẻ hành động Hợp phần C
+        function applyCircuitLeafToStudent() {
+            if (!selectedBranchL2 || !selectedBranchL3) return;
+            const chosenLeaf = CIRCUIT_BRANCH_TREE.level3[selectedBranchL2]?.find(x => x.id === selectedBranchL3);
+            if (!chosenLeaf) return;
+
+            const st = getCurrentStudent();
+
+            // 1. Thêm vào bảng đối chiếu Hợp phần B (nếu chưa trùng)
+            const existsGap = st.gaps.some(g => g.finding === chosenLeaf.finding);
+            if (!existsGap) {
+                st.gaps.unshift({
+                    finding: `[Mạch ${chosenLeaf.code}] ${chosenLeaf.finding}`,
+                    category: chosenLeaf.category,
+                    interpretation: chosenLeaf.interpretation,
+                    action: chosenLeaf.action
+                });
+            }
+
+            // 2. Thêm vào danh sách Thẻ hành động 2-4 tuần (Hợp phần C)
+            st.tasks.unshift({
+                id: Date.now(),
+                title: `[Từ Mạch ${chosenLeaf.code}] ${chosenLeaf.action}`,
+                due: "Trong 2 tuần",
+                tag: "Quan trọng",
+                done: false,
+                supporter: chosenLeaf.supporter,
+                criteria: chosenLeaf.criteria
+            });
+
+            // Lưu lại đường dẫn mạch của học sinh
+            st.defaultCircuitPath = [selectedBranchL1, selectedBranchL2, selectedBranchL3];
+
+            saveToStorage();
+            renderAllViews();
+            showToast(`✅ Đã thêm kết quả nhánh ${chosenLeaf.code} vào Bảng đối chiếu & Thẻ hành động của ${st.id}!`);
         }
 
         // 5. RENDER TAB 1: TRANG CHỦ (GIỐNG ẢNH MẪU 123.JPG)
@@ -1412,7 +2167,7 @@
                             <div class="h-full rounded-full progress-bar-animate" style="width: ${sub.progress}%; background-color: ${sub.color}"></div>
                         </div>
                         <div class="w-9 text-right text-xs font-bold text-slate-700">${sub.progress}%</div>
-                        <span onclick="switchTab('decision-map')" class="cursor-pointer px-2.5 py-1 text-[11px] font-semibold rounded-lg border ${badgeClass} shrink-0">
+                        <span onclick="openDecisionMapAndCircuit()" class="cursor-pointer px-2.5 py-1 text-[11px] font-semibold rounded-lg border ${badgeClass} shrink-0">
                             ${sub.status}
                         </span>
                     </div>
@@ -1591,8 +2346,11 @@
             showToast("Đã lưu cập nhật Hồ sơ & tự động đồng bộ sang Bản đồ quyết định 9+!");
         }
 
-        // 7. RENDER TAB 3: HỢP PHẦN B - BẢN ĐỒ QUYẾT ĐỊNH 9+
+        // 7. RENDER TAB 3: HỢP PHẦN B - BẢN ĐỒ QUYẾT ĐỊNH 9+ & SƠ ĐỒ MẠCH
         function renderDecisionMapTab(st) {
+            // Render Biểu đồ mạch phân nhánh ở đầu trang
+            renderCircuitDiagram();
+
             // Render 4 câu hỏi hạt nhân của Bản đồ quyết định 9+ (Mục 2.1)
             const qGrid = document.getElementById("fourCoreQuestionsGrid");
             const strongSub = st.subjects.filter(s => s.score >= 7.0).map(s => `${s.name} (${s.score})`).join(", ");
@@ -1803,7 +2561,7 @@
                             <div class="flex items-center justify-between pt-2">
                                 <span class="text-[11px] text-slate-400">${s.gaps.length} đối chiếu • ${s.tasks.length} thẻ hành động</span>
                                 <button onclick="selectCaseAndOpenMap('${s.id}')" class="px-3 py-1.5 rounded-xl text-xs font-semibold ${isSelected ? 'bg-emerald-600 text-white' : 'bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white'} transition-colors">
-                                    ${isSelected ? 'Đang chọn' : 'Nạp ca này'}
+                                    ${isSelected ? 'Mở Mạch 9+' : 'Nạp ca này'}
                                 </button>
                             </div>
                         </div>
@@ -1814,10 +2572,11 @@
 
         function selectCaseAndOpenMap(id) {
             currentStudentId = id;
+            const st = getCurrentStudent();
+            loadStudentDefaultCircuit(st);
             renderGlobalStudentSelect();
             renderAllViews();
-            switchTab('dashboard');
-            showToast(`Đã nạp ca giả định ${id} lên Trang chủ & Bản đồ quyết định!`);
+            openDecisionMapAndCircuit();
         }
 
         function openNewStudentModal() {
@@ -1843,6 +2602,7 @@
 
             studentsData.push(newCase);
             currentStudentId = code;
+            loadStudentDefaultCircuit(newCase);
             saveToStorage();
             renderGlobalStudentSelect();
             renderAllViews();
@@ -1874,9 +2634,10 @@
             document.getElementById("csvDropdown").classList.add("hidden");
         }
 
-        // XUẤT 1: Hồ sơ & Bản đồ quyết định 9+ của học sinh hiện tại (Đầy đủ Hợp phần A, B, C)
+        // XUẤT 1: Hồ sơ & Bản đồ quyết định 9+ của học sinh hiện tại (Đầy đủ Hợp phần A, B, C & Mạch phân nhánh)
         function exportCurrentStudentCSV() {
             const st = getCurrentStudent();
+            const circuitPathStr = `${selectedBranchL1 || 'Chưa chọn'} -> ${selectedBranchL2 || 'Chưa chọn'} -> ${selectedBranchL3 || 'Chưa chọn'}`;
             const rows = [
                 ["BÁO CÁO HỒ SƠ & BẢN ĐỒ QUYẾT ĐỊNH 9+ (MÔ HÌNH EDUPATH 9+)"],
                 ["Đơn vị", "Trường Cao đẳng Công nghệ TP.HCM - Phân hiệu tại Đồng Nai"],
@@ -1890,6 +2651,7 @@
                 ["Lựa chọn dự phòng 2", st.goal2],
                 ["Lý do & Sở thích", st.reason],
                 ["Trạng thái xác minh điều kiện", st.verifyStatus],
+                ["Chuỗi mạch giả thuyết thu hẹp phạm vi", circuitPathStr],
                 [],
                 ["BẢNG ĐIỂM HỌC TẬP & KHOẢNG CÁCH NĂNG LỰC"],
                 ["Môn học", "Điểm hiện tại", "Điểm mục tiêu", "Tiến độ (%)", "Nhãn đánh giá"],
@@ -1916,11 +2678,12 @@
         function exportAllCasesCSV() {
             const rows = [
                 ["DANH SÁCH BỘ CA KIỂM THỬ GIẢ ĐỊNH - DỰ ÁN EDUPATH 9+ (PHÂN HIỆU ĐỒNG NAI)"],
-                ["Mã HS", "Tên mô phỏng", "Lộ trình 9+", "Mục tiêu ưu tiên 1", "Mục tiêu 2", "Điểm Toán", "Điểm Văn", "Điểm Lý", "Điểm Hóa", "Điểm Nghề/Sinh", "Điểm Anh", "Trạng thái xác minh hồ sơ", "Số nhiệm vụ 2-4 tuần", "Quyết định của Giáo viên", "Nhận xét của Giáo viên"]
+                ["Mã HS", "Tên mô phỏng", "Lộ trình 9+", "Mục tiêu ưu tiên 1", "Mục tiêu 2", "Điểm Toán", "Điểm Văn", "Điểm Lý", "Điểm Hóa", "Điểm Nghề/Sinh", "Điểm Anh", "Trạng thái xác minh hồ sơ", "Nhánh mạch giả thuyết", "Số nhiệm vụ 2-4 tuần", "Quyết định của Giáo viên", "Nhận xét của Giáo viên"]
             ];
 
             studentsData.forEach(s => {
                 const sc = s.subjects.map(sub => sub.score);
+                const cPath = s.defaultCircuitPath ? s.defaultCircuitPath.join(" -> ") : "A -> A1 -> A1_V1";
                 rows.push([
                     s.id,
                     s.name,
@@ -1934,6 +2697,7 @@
                     sc[4] || "",
                     sc[5] || "",
                     s.verifyStatus,
+                    cPath,
                     s.tasks.length,
                     s.teacherDecision,
                     s.teacherReview
@@ -1986,6 +2750,19 @@
             const activeBtn = document.getElementById(`nav-${tabName}`);
             if (activeBtn) {
                 activeBtn.className = "nav-item w-full flex items-center space-x-3.5 px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-[#3b66d6] text-white shadow-md";
+            }
+
+            // Khi người dùng bấm vào tab Bản đồ quyết định 9+, tự động cuộn lên đầu và bật hiệu ứng sáng Biểu đồ mạch phân nhánh
+            if (tabName === 'decision-map') {
+                renderCircuitDiagram();
+                const mainScroll = document.getElementById("mainScrollArea");
+                if (mainScroll) mainScroll.scrollTo({ top: 0, behavior: "smooth" });
+                const circuitBox = document.getElementById("circuitBranchingContainer");
+                if (circuitBox) {
+                    circuitBox.classList.remove("circuit-highlight-ring");
+                    void circuitBox.offsetWidth;
+                    circuitBox.classList.add("circuit-highlight-ring");
+                }
             }
 
             // Đóng sidebar trên mobile nếu đang mở
@@ -2048,7 +2825,7 @@
                             <div class="text-xs font-bold text-slate-800">${s.id} - ${s.goal1}</div>
                             <div class="text-[11px] text-slate-500">${s.stream}</div>
                         </div>
-                        <span class="text-[10px] px-2 py-0.5 bg-blue-100 text-blue-700 rounded font-semibold">Xem ngay</span>
+                        <span class="text-[10px] px-2 py-0.5 bg-blue-100 text-blue-700 rounded font-semibold">Mở Mạch 9+</span>
                     </div>
                 `).join("");
             }
@@ -2072,7 +2849,7 @@
                     <p><b>Đơn vị xác nhận:</b> Bộ phận Đào tạo / Giáo vụ và Giáo viên chủ nhiệm Trường Cao đẳng Công nghệ TP.HCM – Phân hiệu tại Đồng Nai.</p>
                     <p><b>Quy trình 3 bước dành cho học sinh:</b></p>
                     <ul class="list-disc pl-5 space-y-1">
-                        <li>Bước 1: Lập Phiếu chân dung mục tiêu và Bản đồ khoảng cách trên EDUPATH 9+.</li>
+                        <li>Bước 1: Lập Phiếu chân dung mục tiêu và chạy Biểu đồ mạch phân nhánh trên EDUPATH 9+.</li>
                         <li>Bước 2: Ghi rõ các câu hỏi cần xác minh về hồ sơ, diện dự thi hoặc điều kiện liên thông.</li>
                         <li>Bước 3: Gặp trực tiếp giáo viên tư vấn hoặc cán bộ phụ trách đào tạo để xác nhận bằng văn bản.</li>
                     </ul>
@@ -2108,10 +2885,11 @@
             localStorage.removeItem("EDUPATH_9PLUS_DATA_V1");
             studentsData = JSON.parse(JSON.stringify(DEFAULT_STUDENTS));
             currentStudentId = "HS-01";
+            loadStudentDefaultCircuit(getCurrentStudent());
             renderGlobalStudentSelect();
             renderAllViews();
             document.getElementById("csvDropdown").classList.add("hidden");
-            showToast("Đã khôi phục toàn bộ dữ liệu 06 ca giả định về mặc định!");
+            showToast("Đã khôi phục toàn bộ dữ liệu 06 ca giả định & sơ đồ mạch về mặc định!");
         }
 
         function showToast(msg) {
